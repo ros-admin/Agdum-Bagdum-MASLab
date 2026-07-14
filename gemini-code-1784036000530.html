@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Agdum Bagdum (Episode-2)</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap');
+        
+        body { font-family: 'Outfit', sans-serif; background-color: #f8fafc; }
+        /* Transparent Loader Background - No blur, completely clear background */
+        .modal-overlay-loader { background: rgba(15, 23, 42, 0.03); backdrop-filter: none; }
+        .modal-overlay { background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(8px); }
+        .info-sub-box { background-color: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 12px; }
+        
+        /* Scientific Atom Loader Theme */
+        .atom-loader { position: relative; width: 70px; height: 70px; display: flex; justify-content: center; align-items: center; }
+        .atom-center { width: 14px; height: 14px; background: radial-gradient(circle, #6366f1, #4f46e5); border-radius: 100%; box-shadow: 0 0 15px #6366f1; z-index: 10; animation: pulse 1.2s infinite ease-in-out; }
+        .atom-orbit { position: absolute; border: 2px solid rgba(99, 102, 241, 0.35); border-radius: 50%; }
+        .atom-orbit:nth-child(1) { width: 66px; height: 26px; transform: rotate(0deg); animation: orbit1 2s linear infinite; border-top-color: #6366f1; }
+        .atom-orbit:nth-child(2) { width: 66px; height: 26px; transform: rotate(60deg); animation: orbit2 2s linear infinite; border-top-color: #f43f5e; }
+        .atom-orbit:nth-child(3) { width: 66px; height: 26px; transform: rotate(120deg); animation: orbit3 2s linear infinite; border-top-color: #10b981; }
+
+        @keyframes pulse { 0%, 100% { transform: scale(0.9); opacity: 0.8; } 50% { transform: scale(1.15); opacity: 1; box-shadow: 0 0 25px #6366f1; } }
+        @keyframes orbit1 { 100% { transform: rotate(360deg); } }
+        @keyframes orbit2 { 0% { transform: rotate(60deg); } 100% { transform: rotate(420deg); } }
+        @keyframes orbit3 { 0% { transform: rotate(120deg); } 100% { transform: rotate(500deg); } }
+
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col antialiased">
+
+    <div id="toastContainer" class="fixed top-4 right-4 left-4 sm:left-auto z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
+
+    <div id="loader" class="fixed inset-0 z-50 hidden flex items-center justify-center modal-overlay-loader">
+        <div class="atom-loader">
+            <div class="atom-orbit"></div>
+            <div class="atom-orbit"></div>
+            <div class="atom-orbit"></div>
+            <div class="atom-center"></div>
+        </div>
+    </div>
+
+    <div id="loginBox" class="max-w-md w-full mx-auto my-auto px-4 py-6">
+        <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-xl border border-slate-100">
+            <div class="text-center mb-6">
+                <div class="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-xl mx-auto flex items-center justify-center text-xl shadow-inner mb-2">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <h2 class="text-xl font-bold text-slate-900">Admin Panel</h2>
+                <p class="text-slate-400 text-xs mt-0.5">Agdum Bagdum — Episode 2</p>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Username</label>
+                    <input type="text" id="username" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-indigo-500 focus:bg-white transition text-xs" placeholder="Your Username">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Password</label>
+                    <div class="relative">
+                        <input type="password" id="password" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-indigo-500 focus:bg-white transition text-xs" placeholder="••••••••">
+                        <button type="button" onclick="togglePasswordVisibility()" class="absolute right-3 top-3 text-slate-400 hover:text-slate-600 transition cursor-pointer text-xs">
+                            <i id="passwordIcon" class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <input type="checkbox" id="rememberMe" class="w-4 h-4 text-indigo-600 border-slate-300 rounded cursor-pointer">
+                    <label for="rememberMe" class="ml-2 text-xs font-bold text-slate-500 select-none cursor-pointer">Remember Me</label>
+                </div>
+                <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl shadow-md shadow-indigo-600/20 transition cursor-pointer text-sm" onclick="login()">Login</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="dashboardBox" class="hidden max-w-7xl w-full mx-auto px-3 sm:px-4 py-4 sm:py-6 flex-1 flex flex-col">
+        
+        <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-100 shadow-md flex justify-between items-center gap-4 mb-4 relative">
+            <div>
+                <h1 class="text-lg sm:text-2xl font-bold text-slate-900 tracking-tight">Agdum Bagdum <span class="text-xs sm:text-sm font-semibold text-slate-500">(Episode-2)</span></h1>
+                <p class="text-[10px] sm:text-xs font-bold text-indigo-600 uppercase tracking-wide mt-0.5">Admin Dashboard</p>
+            </div>
+            <div class="relative">
+                <button onclick="toggleProfileDropdown(event)" class="w-9 h-9 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl flex items-center justify-center transition cursor-pointer">
+                    <i class="fas fa-user-circle text-base"></i>
+                </button>
+                <div id="profileDropdown" class="absolute right-0 top-12 w-56 bg-white rounded-xl shadow-xl border border-slate-100 p-4 z-50 hidden text-center">
+                    <div class="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-full mx-auto flex items-center justify-center text-sm font-bold mb-2">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <h4 class="font-bold text-slate-800 text-xs">MASLab</h4>
+                    <p class="text-slate-400 text-[10px] font-medium">info@maslab.org</p>
+                    <div class="border-t border-slate-100 my-3"></div>
+                    <button onclick="logout()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-2 rounded-lg text-[11px] transition cursor-pointer flex items-center justify-center gap-1">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex border-b border-slate-200 mb-4 gap-1 overflow-x-auto">
+            <button id="tabOverviewBtn" onclick="switchTab('overview')" class="px-4 py-2.5 font-bold text-xs sm:text-sm text-indigo-600 border-b-2 border-indigo-600 transition cursor-pointer flex items-center gap-1.5 whitespace-nowrap">
+                <i class="fas fa-chart-pie"></i> Overview
+            </button>
+            <button id="tabManagementBtn" onclick="switchTab('management')" class="px-4 py-2.5 font-bold text-xs sm:text-sm text-slate-500 hover:text-slate-800 transition cursor-pointer flex items-center gap-1.5 whitespace-nowrap">
+                <i class="fas fa-users-cog"></i> Student Management
+            </button>
+            <button id="tabPdfBtn" onclick="switchTab('pdf')" class="px-4 py-2.5 font-bold text-xs sm:text-sm text-slate-500 hover:text-slate-800 transition cursor-pointer flex items-center gap-1.5 whitespace-nowrap">
+                <i class="fas fa-file-pdf"></i> PDF Download
+            </button>
+            <button id="tabActivityBtn" onclick="switchTab('activity')" class="px-4 py-2.5 font-bold text-xs sm:text-sm text-slate-500 hover:text-slate-800 transition cursor-pointer flex items-center gap-1.5 whitespace-nowrap">
+                <i class="fas fa-history"></i> Activity Log
+            </button>
+        </div>
+
+        <div id="tabOverview" class="block space-y-4">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                <div onclick="clickAnalyticsCard('All')" class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition cursor-pointer flex flex-col justify-between min-h-[110px]">
+                    <div>
+                        <p class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase">Total Registration</p>
+                        <h3 id="cardTotal" class="text-2xl sm:text-3xl font-bold text-slate-800 font-mono mt-1">0</h3>
+                    </div>
+                    <p class="text-[9px] sm:text-[10px] font-bold text-indigo-500 mt-2">View All <i class="fas fa-arrow-right text-[8px]"></i></p>
+                </div>
+                <div onclick="clickAnalyticsCard('Approved')" class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition cursor-pointer flex flex-col justify-between min-h-[110px]">
+                    <div>
+                        <p class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase">Approved</p>
+                        <h3 id="cardApproved" class="text-2xl sm:text-3xl font-bold text-emerald-600 font-mono mt-1">0</h3>
+                    </div>
+                    <p class="text-[9px] sm:text-[10px] font-bold text-emerald-500 mt-2">View <i class="fas fa-arrow-right text-[8px]"></i></p>
+                </div>
+                <div onclick="clickAnalyticsCard('Pending')" class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition cursor-pointer flex flex-col justify-between min-h-[110px]">
+                    <div>
+                        <p class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase">Pending</p>
+                        <h3 id="cardPending" class="text-2xl sm:text-3xl font-bold text-amber-600 font-mono mt-1">0</h3>
+                    </div>
+                    <p class="text-[9px] sm:text-[10px] font-bold text-amber-500 mt-2">View <i class="fas fa-arrow-right text-[8px]"></i></p>
+                </div>
+                <div onclick="clickAnalyticsCard('Suspended')" class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition cursor-pointer flex flex-col justify-between min-h-[110px]">
+                    <div>
+                        <p class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase">Suspended</p>
+                        <h3 id="cardSuspend" class="text-2xl sm:text-3xl font-bold text-rose-600 font-mono mt-1">0</h3>
+                    </div>
+                    <p class="text-[9px] sm:text-[10px] font-bold text-rose-500 mt-2">View <i class="fas fa-arrow-right text-[8px]"></i></p>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
+                    <h4 class="text-xs sm:text-sm font-bold text-slate-700 mb-3 uppercase tracking-wider">Last 7 Days Registration</h4>
+                    <div class="relative w-full h-[220px] sm:h-[280px]">
+                        <canvas id="lineChart7Days"></canvas>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm h-[280px] flex flex-col justify-between">
+                        <h4 class="text-xs sm:text-sm font-bold text-slate-700 uppercase tracking-wider">Gender Wise Registration</h4>
+                        <div class="relative w-full h-[200px] mx-auto flex items-center justify-center">
+                            <canvas id="pieChartGender"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm h-[280px] flex flex-col justify-between">
+                        <h4 class="text-xs sm:text-sm font-bold text-slate-700 uppercase tracking-wider">Age Wise Registration</h4>
+                        <div class="relative w-full h-[200px]">
+                            <canvas id="barChartAge"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tabManagement" class="hidden space-y-3">
+            <div class="bg-white p-3 rounded-xl border border-slate-100 shadow-sm flex flex-col gap-3">
+                <div class="w-full flex flex-col sm:flex-row gap-3 items-center justify-between">
+                    <div class="relative w-full sm:max-w-xs">
+                        <i class="fas fa-search absolute left-3 top-3 text-slate-400 text-xs"></i>
+                        <input type="text" id="searchInput" oninput="filterData()" class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:border-indigo-500 transition" placeholder="Search by name, mobile, email...">
+                    </div>
+                    <button onclick="exportFilteredToExcel()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-md transition cursor-pointer justify-center">
+                        <i class="fas fa-file-excel"></i> Download Excel
+                    </button>
+                </div>
+                
+                <div class="grid grid-cols-3 gap-2 border-t border-slate-100 pt-3">
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Status</label>
+                        <select id="statusFilter" onchange="filterData()" class="w-full bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold p-2 cursor-pointer">
+                            <option value="All">All Status</option>
+                            <option value="Approved">Approved</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Suspended">Suspended</option>
+                            <option value="Inactive">Inactive</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Gender</label>
+                        <select id="genderFilter" onchange="filterData()" class="w-full bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold p-2 cursor-pointer">
+                            <option value="All">All Gender</option>
+                            <option value="Men">Men</option>
+                            <option value="Women">Women</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Age</label>
+                        <select id="ageFilter" onchange="filterData()" class="w-full bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold p-2 cursor-pointer">
+                            <option value="All">All Age</option>
+                            <option value="7">7 Years</option>
+                            <option value="8">8 Years</option>
+                            <option value="9">9 Years</option>
+                            <option value="10">10 Years</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs min-w-[700px] sm:min-w-full">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-100">
+                                <th class="p-3 font-bold text-slate-500 text-center w-12">Sl. No</th>
+                                <th class="p-3 font-bold text-slate-800">Student Name</th>
+                                <th class="p-3 font-bold text-slate-800">Mobile No</th>
+                                <th class="p-3 font-bold text-slate-800">Email Address</th>
+                                <th class="p-3 font-bold text-slate-800">Age</th>
+                                <th class="p-3 font-bold text-slate-800">Status</th>
+                                <th class="p-3 font-bold text-slate-800 text-center">Change Status</th>
+                                <th class="p-3 font-bold text-slate-800 text-center w-24">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody" class="divide-y divide-slate-50"></tbody>
+                    </table>
+                    <div id="noDataMessage" class="hidden text-center py-10 text-slate-400 font-medium text-xs">
+                        <i class="fas fa-folder-open text-2xl block mb-1 opacity-50"></i> No data found!
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tabPdf" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-md">
+                <h3 class="text-base font-bold text-slate-900 border-b border-slate-100 pb-2.5 mb-4 flex items-center gap-2">
+                    <i class="fas fa-download text-indigo-600"></i> PDF Download Panel
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col justify-between">
+                        <div>
+                            <h4 class="font-bold text-slate-800 text-sm mb-1">1. Full Student Register Sheet</h4>
+                            <p class="text-xs text-slate-500 mb-4">Download comprehensive registered students details sheet.</p>
+                        </div>
+                        <button onclick="generateFullRegisterPDF()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-4 rounded-xl text-xs transition shadow-md flex items-center justify-center gap-2">
+                            <i class="fas fa-file-invoice"></i> Download PDF
+                        </button>
+                    </div>
+
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col justify-between">
+                        <div>
+                            <h4 class="font-bold text-slate-800 text-sm mb-1">2. Attendance Sheets</h4>
+                            <p class="text-xs text-slate-500 mb-4">Download official attendance sheets for workshops.</p>
+                        </div>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                            <button onclick="generateAttendancePDF('Day_1', 'Day 1')" class="bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 font-bold py-2 px-3 rounded-lg text-[11px] transition flex items-center justify-center gap-1.5 shadow-2xs">Day 1</button>
+                            <button onclick="generateAttendancePDF('Day_2', 'Day 2')" class="bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 font-bold py-2 px-3 rounded-lg text-[11px] transition flex items-center justify-center gap-1.5 shadow-2xs">Day 2</button>
+                            <button onclick="generateAttendancePDF('Day_3', 'Day 3')" class="bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 font-bold py-2 px-3 rounded-lg text-[11px] transition flex items-center justify-center gap-1.5 shadow-2xs">Day 3</button>
+                            <button onclick="generateAttendancePDF('Day_4', 'Day 4')" class="bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 font-bold py-2 px-3 rounded-lg text-[11px] transition flex items-center justify-center gap-1.5 shadow-2xs">Day 4</button>
+                            <button onclick="generateAttendancePDF('Day_5_Final', 'Day 5 / Final')" class="bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 font-bold py-2 px-3 rounded-lg text-[11px] transition flex items-center justify-center gap-1.5 shadow-2xs">Day 5 (Final)</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tabActivity" class="hidden space-y-4">
+            <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-md">
+                <div class="flex justify-between items-center border-b border-slate-100 pb-2.5 mb-4">
+                    <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fas fa-history text-indigo-600"></i> Admin Activity Log History
+                    </h3>
+                    <button onclick="clearActivityLogs()" class="text-rose-600 hover:text-rose-700 text-xs font-bold transition flex items-center gap-1 cursor-pointer">
+                        <i class="fas fa-trash-alt"></i> Clear Logs
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs min-w-[600px]">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-100">
+                                <th class="p-3 font-bold text-slate-500 text-center w-12">Sl. No</th>
+                                <th class="p-3 font-bold text-slate-800">Date & Time</th>
+                                <th class="p-3 font-bold text-slate-800">Student Name (Row ID)</th>
+                                <th class="p-3 font-bold text-slate-800">Previous Status</th>
+                                <th class="p-3 font-bold text-slate-800">Current Status</th>
+                                <th class="p-3 font-bold text-slate-800">Action Reason / Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody id="activityTableBody" class="divide-y divide-slate-50"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="detailsModal" class="fixed inset-0 z-40 hidden items-center justify-center p-3 sm:p-4 modal-overlay" onclick="closeDetailsModal()">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-slate-200" onclick="event.stopPropagation()">
+            <div class="p-5 text-center bg-gradient-to-r from-indigo-600 to-indigo-800 text-white rounded-t-2xl">
+                <h1 class="text-xl font-bold">Agdum Bagdum - Episode 2</h1>
+                <p class="text-[10px] font-bold opacity-80 uppercase tracking-wider">(Student Detail Sheet)</p>
+            </div>
+            <div class="p-4 space-y-3 bg-slate-50/30 m-3 rounded-xl border border-slate-200">
+                <div class="grid grid-cols-3 gap-2 p-2 bg-white rounded-xl border border-slate-200 shadow-2xs">
+                    <div class="p-1.5 bg-slate-50 rounded-lg text-center">
+                        <span class="text-[9px] font-bold text-slate-400 block">Registration Date</span>
+                        <strong id="mRegDate" class="text-slate-800 font-mono text-[11px]">-</strong>
+                    </div>
+                    <div class="p-1.5 bg-slate-50 rounded-lg text-center">
+                        <span class="text-[9px] font-bold text-slate-400 block">Registration Time</span>
+                        <strong id="mRegTime" class="text-slate-800 font-mono text-[11px]">-</strong>
+                    </div>
+                    <div class="p-1.5 bg-slate-50 rounded-lg text-center flex flex-col justify-center items-center">
+                        <span class="text-[9px] font-bold text-slate-400 block">Status</span>
+                        <span id="mStatus" class="rounded px-1.5 py-0.5 font-bold text-[9px] uppercase">-</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div class="bg-white p-3 rounded-xl border border-slate-200 space-y-2 text-xs">
+                        <h4 class="font-bold text-indigo-600 border-b border-slate-100 pb-1 text-[11px] uppercase tracking-wider">Personal Details</h4>
+                        <div class="info-sub-box"><span class="text-slate-400 text-[9px] block">Name:</span> <strong id="mName" class="text-slate-800"></strong></div>
+                        <div class="info-sub-box"><span class="text-slate-400 text-[9px] block">Mobile:</span> <strong id="mMobile" class="text-slate-700 font-mono"></strong></div>
+                        <div class="info-sub-box"><span class="text-slate-400 text-[9px] block">Email:</span> <strong id="mEmail" class="text-slate-700 break-all"></strong></div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="info-sub-box"><span class="text-slate-400 text-[9px] block">Gender:</span> <strong id="mGender" class="text-slate-700"></strong></div>
+                            <div class="info-sub-box"><span class="text-slate-400 text-[9px] block">Age:</span> <strong id="mAge" class="text-slate-700"></strong></div>
+                        </div>
+                        <div class="info-sub-box"><span class="text-slate-400 text-[9px] block">Date of Birth:</span> <strong id="mDob" class="text-slate-700 font-mono"></strong></div>
+                    </div>
+                    <div class="bg-white p-3 rounded-xl border border-slate-200 space-y-2 text-xs flex flex-col">
+                        <h4 class="font-bold text-pink-600 border-b border-slate-100 pb-1 text-[11px] uppercase tracking-wider">Payment Details</h4>
+                        <div class="info-sub-box"><span class="text-slate-400 text-[9px] block">bKash Paid?</span> <strong id="mPaid" class="text-slate-800"></strong></div>
+                        <div class="info-sub-box"><span class="text-slate-400 text-[9px] block">bKash Mobile:</span> <strong id="mBkash" class="text-slate-700 font-mono"></strong></div>
+                        <div class="info-sub-box flex-1"><span class="text-slate-400 text-[9px] block">Transaction ID:</span> <code id="mTrx" class="text-pink-600 font-bold block mt-1 font-mono"></code></div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-3 rounded-xl border border-slate-200 text-xs">
+                    <span class="text-slate-400 text-[9px] font-bold block">Admin Reason/Note</span>
+                    <p id="mAdminReason" class="text-slate-700 mt-1 bg-slate-50 p-2 rounded border border-slate-100 font-semibold"></p>
+                </div>
+                <div class="bg-white p-3 rounded-xl border border-slate-200 text-xs">
+                    <span class="text-slate-400 text-[9px] font-bold block">User Comment</span>
+                    <p id="mComment" class="text-slate-700 mt-1 bg-slate-50 p-2 rounded border border-slate-100 min-h-[35px]"></p>
+                </div>
+            </div>
+            <div class="px-5 pb-4 flex items-center justify-end">
+                <button onclick="closeDetailsModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-5 py-2 rounded-xl text-xs transition">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-white border-t border-slate-200 py-3 text-center text-[11px] font-bold text-slate-500 mt-auto">
+        Developed by, <a href="https://www.facebook.com/utsabsarker.arup" target="_blank" class="text-indigo-600 hover:underline">Utsab Sarker</a>
+    </footer>
+
+    <script>
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzeRAaTC5ti_Eqt3grsqQ0o-vt-RVyfgmtC1vBGdALfkPH5e8Pn3yKy1vl4dhEwhSYTPA/exec";
+        
+        let studentsGlobalData = [];
+        let currentFilteredData = [];
+        let activityLogs = []; 
+
+        let lineChartInstance = null;
+        let pieChartInstance = null;
+        let barChartInstance = null;
+
+        window.onload = function() {
+            window.addEventListener('click', function() {
+                const profile = document.getElementById('profileDropdown'); 
+                if(profile){ profile.classList.add('hidden'); }
+            });
+
+            // LocalStorage থেকে অ্যাক্টিভিটি লগ রিকভার করা (যেন রিফ্রেশে না হারায়)
+            const savedLogs = localStorage.getItem("admin_activity_logs");
+            if (savedLogs) {
+                activityLogs = JSON.parse(savedLogs);
+                renderActivityLogs();
+            }
+
+            if(localStorage.getItem("adminLoggedIn") === "true" && localStorage.getItem("admin_token")) {
+                document.getElementById('loginBox').classList.add('hidden');
+                document.getElementById('dashboardBox').classList.remove('hidden');
+                fetchData();
+            }
+        };
+
+        function showToast(message, type = "success") {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `flex items-center gap-2.5 p-3.5 rounded-xl shadow-lg border text-xs font-bold text-white transition-all duration-300 transform translate-y-2 pointer-events-auto opacity-0`;
+            if (type === "success") toast.className += " bg-emerald-600 border-emerald-500";
+            else if (type === "error") toast.className += " bg-rose-600 border-rose-500";
+            else toast.className += " bg-indigo-600 border-indigo-500";
+            toast.innerHTML = `<span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => { toast.classList.remove('opacity-0', 'translate-y-2'); }, 30);
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-[-10px]');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function toggleLoader(show) { document.getElementById('loader').style.display = show ? 'flex' : 'none'; }
+        function toggleProfileDropdown(event) { event.stopPropagation(); document.getElementById('profileDropdown').classList.toggle('hidden'); }
+
+        function switchTab(tabName) {
+            const tabs = ['overview', 'management', 'pdf', 'activity'];
+            tabs.forEach(t => {
+                const el = document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}`);
+                const btn = document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}Btn`);
+                if(t === tabName) {
+                    el.classList.replace('hidden', 'block');
+                    btn.className = "px-4 py-2.5 font-bold text-xs sm:text-sm text-indigo-600 border-b-2 border-indigo-600 transition cursor-pointer flex items-center gap-1.5";
+                } else {
+                    el.classList.replace('block', 'hidden');
+                    btn.className = "px-4 py-2.5 font-bold text-xs sm:text-sm text-slate-500 hover:text-slate-800 transition cursor-pointer flex items-center gap-1.5";
+                }
+            });
+        }
+
+        function clickAnalyticsCard(status) {
+            document.getElementById('statusFilter').value = status;
+            switchTab('management');
+            filterData();
+        }
+
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('password');
+            const passwordIcon = document.getElementById('passwordIcon');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                passwordIcon.className = "fas fa-eye-slash";
+            } else {
+                passwordInput.type = 'password';
+                passwordIcon.className = "fas fa-eye";
+            }
+        }
+
+        // শিটের টেক্সট ডেটা সরাসরি নির্ভুলভাবে পাস করার লজিক (কোন পরিবর্তন ছাড়াই)
+        function cleanStringData(val) {
+            if (!val) return "-";
+            return val.toString().trim();
+        }
+
+        function translateGender(g) {
+            if (!g) return "-";
+            let val = g.toString().trim();
+            if (val === "ছেলে" || val.toLowerCase() === "male" || val.toLowerCase() === "men") return "Men";
+            if (val === "মেয়ে" || val === "মেয়ে" || val.toLowerCase() === "female" || val.toLowerCase() === "women") return "Women";
+            return val;
+        }
+
+        function translateAge(a) {
+            if (!a) return "-";
+            let str = a.toString().trim();
+            if (str.includes('7') || str.includes('৭')) return "7 Years";
+            if (str.includes('8') || str.includes('৮')) return "8 Years";
+            if (str.includes('9') || str.includes('৯')) return "9 Years";
+            if (str.includes('10') || str.includes('১০')) return "10 Years";
+            return str;
+        }
+
+        function translatePaymentStatus(p) {
+            if (!p) return "No";
+            let str = p.toString().trim();
+            if (str === "হ্যাঁ" || str === "হ্যা" || str.toLowerCase() === "yes" || str === "true") return "Yes";
+            return "No";
+        }
+
+        function getCurrentFormattedDateTime() {
+            const now = new Date();
+            const day = now.getDate().toString().padStart(2, '0');
+            const month = (now.getMonth() + 1).toString().padStart(2, '0');
+            const year = now.getFullYear();
+            let hours = now.getHours();
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; 
+            return `${day}/${month}/${year} ${hours}:${minutes} ${ampm}`;
+        }
+
+        function login() {
+            const u = document.getElementById('username').value.trim();
+            const p = document.getElementById('password').value.trim();
+            const remember = document.getElementById('rememberMe').checked;
+            
+            if(!u || !p) { showToast("Please input username & password!", "error"); return; }
+            toggleLoader(true);
+
+            fetch(WEB_APP_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: "admin_login", username: u, password: p })
+            })
+            .then(res => res.json())
+            .then(res => {
+                toggleLoader(false);
+                if(res.status === "success" && res.token) {
+                    if(remember) { localStorage.setItem("adminLoggedIn", "true"); }
+                    localStorage.setItem("admin_token", res.token);
+                    document.getElementById('loginBox').classList.add('hidden');
+                    document.getElementById('dashboardBox').classList.remove('hidden');
+                    showToast("Login Successful!");
+                    fetchData();
+                } else { showToast(res.message || "Invalid credentials!", "error"); }
+            }).catch(() => { toggleLoader(false); showToast("Connection error!", "error"); });
+        }
+
+        function logout() {
+            localStorage.removeItem("adminLoggedIn");
+            localStorage.removeItem("admin_token");
+            showToast("Logging out...", "info");
+            setTimeout(() => location.reload(), 500);
+        }
+
+        function fetchData() {
+            toggleLoader(true);
+            const token = localStorage.getItem('admin_token');
+            fetch(`${WEB_APP_URL}?token=${encodeURIComponent(token)}`)
+            .then(res => {
+                if(res.status === 401 || res.status === 403) throw new Error("Unauthorized");
+                return res.json();
+            })
+            .then(data => {
+                studentsGlobalData = data;
+                updateDashboardCards(data);
+                generateRealTimeCharts(data);
+                filterData();
+                toggleLoader(false);
+            })
+            .catch(() => { 
+                toggleLoader(false); 
+                showToast("Session Expired! Please login again.", "error"); 
+                logout();
+            });
+        }
+
+        function updateDashboardCards(data) {
+            document.getElementById('cardTotal').innerText = data.length;
+            document.getElementById('cardApproved').innerText = data.filter(st => st.status === "Approved").length;
+            document.getElementById('cardPending').innerText = data.filter(st => !st.status || st.status === "Pending").length;
+            document.getElementById('cardSuspend').innerText = data.filter(st => st.status === "Suspended").length;
+        }
+
+        function generateRealTimeCharts(data) {
+            const last7DaysMap = {};
+            const lineLabels = [];
+            const mapKeys = [];
+
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date();
+                d.setDate(d.getDate() - i);
+                const day = d.getDate().toString().padStart(2, '0');
+                const month = (d.getMonth() + 1).toString().padStart(2, '0');
+                const year = d.getFullYear();
+                
+                const internalKey = `${day}/${month}/${year}`;
+                last7DaysMap[internalKey] = 0;
+                lineLabels.push(internalKey);
+                mapKeys.push(internalKey);
+            }
+
+            data.forEach(st => {
+                let parsedRegDate = cleanStringData(st.date);
+                if (parsedRegDate && last7DaysMap[parsedRegDate] !== undefined) {
+                    last7DaysMap[parsedRegDate]++;
+                }
+            });
+
+            const lineDataValues = mapKeys.map(key => last7DaysMap[key]);
+
+            let maleCount = 0, femaleCount = 0;
+            data.forEach(st => {
+                const gen = translateGender(st.gender);
+                if (gen === 'Men') maleCount++;
+                else if (gen === 'Women') femaleCount++;
+            });
+
+            let age7 = 0, age8 = 0, age9 = 0, age10 = 0;
+            data.forEach(st => {
+                const age = translateAge(st.age);
+                if (age.includes('7')) age7++;
+                else if (age.includes('8')) age8++;
+                else if (age.includes('9')) age9++;
+                else if (age.includes('10')) age10++;
+            });
+
+            if (lineChartInstance) lineChartInstance.destroy();
+            if (pieChartInstance) pieChartInstance.destroy();
+            if (barChartInstance) barChartInstance.destroy();
+
+            const ctxLine = document.getElementById('lineChart7Days').getContext('2d');
+            lineChartInstance = new Chart(ctxLine, {
+                type: 'line',
+                data: {
+                    labels: lineLabels,
+                    datasets: [{
+                        label: 'Registrations',
+                        data: lineDataValues,
+                        borderColor: '#6366f1',
+                        backgroundColor: 'rgba(99, 102, 241, 0.15)',
+                        fill: true,
+                        tension: 0.3,
+                        pointBackgroundColor: '#6366f1',
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                }
+            });
+
+            const ctxPie = document.getElementById('pieChartGender').getContext('2d');
+            pieChartInstance = new Chart(ctxPie, {
+                type: 'pie',
+                data: {
+                    labels: ['Men', 'Women'],
+                    datasets: [{
+                        data: [maleCount, femaleCount],
+                        backgroundColor: ['#6366f1', '#f43f5e'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+
+            const ctxBar = document.getElementById('barChartAge').getContext('2d');
+            barChartInstance = new Chart(ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: ['7 Years', '8 Years', '9 Years', '10 Years'],
+                    datasets: [{
+                        data: [age7, age8, age9, age10],
+                        backgroundColor: ['#38bdf8', '#fb7185', '#a78bfa', '#34d399'],
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                }
+            });
+        }
+
+        function renderTable(data) {
+            const tbody = document.getElementById('tableBody');
+            const zeroMsg = document.getElementById('noDataMessage');
+            tbody.innerHTML = '';
+            
+            if (data.length === 0) { zeroMsg.classList.remove('hidden'); return; } 
+            else { zeroMsg.classList.add('hidden'); }
+
+            data.forEach((st, idx) => {
+                let badgeStyle = "bg-amber-50 text-amber-700 border border-amber-200";
+                if(st.status === "Approved") badgeStyle = "bg-emerald-50 text-emerald-700 border border-emerald-200";
+                if(st.status === "Suspended") badgeStyle = "bg-rose-50 text-rose-700 border border-rose-200";
+                if(st.status === "Inactive") badgeStyle = "bg-slate-50 text-slate-700 border border-slate-200";
+
+                const globalIdx = studentsGlobalData.findIndex(g => g.row_id === st.row_id);
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition";
+                tr.innerHTML = `
+                    <td class="p-3 text-center font-bold text-slate-400">${idx + 1}</td>
+                    <td class="p-3 font-bold text-slate-900">${st.name}</td>
+                    <td class="p-3 font-semibold text-slate-600 font-mono">${st.mobile || '-'}</td>
+                    <td class="p-3 text-slate-500 font-medium">${st.email || 'N/A'}</td>
+                    <td class="p-3 font-bold text-slate-700">${translateAge(st.age)}</td>
+                    <td class="p-3">
+                        <span class="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${badgeStyle}">${st.status || 'Pending'}</span>
+                    </td>
+                    <td class="p-3 text-center">
+                        <select onchange="changeStatus(${st.row_id}, this.value, '${st.status || 'Pending'}', '${st.name}')" class="bg-white border border-slate-200 rounded-lg text-[11px] font-bold p-1 outline-none cursor-pointer text-slate-700">
+                            <option value="">Change</option>
+                            <option value="Approved" ${st.status === 'Approved' ? 'disabled' : ''}>Approved</option>
+                            <option value="Pending" ${st.status === 'Pending' || !st.status ? 'disabled' : ''}>Pending</option>
+                            <option value="Suspended" ${st.status === 'Suspended' ? 'disabled' : ''}>Suspended</option>
+                            <option value="Inactive" ${st.status === 'Inactive' ? 'disabled' : ''}>Inactive</option>
+                        </select>
+                    </td>
+                    <td class="p-3 text-center">
+                        <button onclick="openDetailsModal(${globalIdx})" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 font-bold p-2 rounded-lg text-xs cursor-pointer"><i class="fas fa-eye"></i></button>
+                    </td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filterData() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const statusFilter = document.getElementById('statusFilter').value;
+            const genderFilter = document.getElementById('genderFilter').value;
+            const ageFilter = document.getElementById('ageFilter').value;
+
+            currentFilteredData = studentsGlobalData.filter(st => {
+                const matchesSearch = (st.name || '').toLowerCase().includes(query) || 
+                                      (st.mobile || '').toString().includes(query) || 
+                                      (st.email || '').toLowerCase().includes(query);
+                
+                const matchesStatus = (statusFilter === "All") || 
+                                      (statusFilter === "Pending" && (!st.status || st.status === "Pending")) || 
+                                      (st.status === statusFilter);
+
+                const matchesGender = (genderFilter === "All") || 
+                                      (translateGender(st.gender) === genderFilter);
+
+                const matchesAge = (ageFilter === "All") || 
+                                   (translateAge(st.age).includes(ageFilter));
+                
+                return matchesSearch && matchesStatus && matchesGender && matchesAge;
+            });
+            renderTable(currentFilteredData);
+        }
+
+        function changeStatus(rowId, status, oldStatus, userName) {
+            if(!status) return;
+            
+            let reason = "ok";
+            if (status !== "Approved") {
+                reason = prompt(`Enter action reason for switching to "${status}":`);
+                if (reason === null) { fetchData(); return; }
+                if (reason.trim() === "") {
+                    alert("Reason is required!");
+                    fetchData();
+                    return;
+                }
+            } else {
+                if(!confirm(`Approve student ${userName}?`)) {
+                    fetchData();
+                    return;
+                }
+            }
+
+            toggleLoader(true);
+            const token = localStorage.getItem('admin_token');
+            
+            fetch(WEB_APP_URL, {
+                method: 'POST',
+                body: JSON.stringify({ 
+                    action: "update_status", 
+                    token: token, 
+                    row_id: rowId, 
+                    new_status: status,
+                    admin_reason: reason 
+                })
+            })
+            .then(res => res.json())
+            .then(res => { 
+                if(res.status === "success") { 
+                    showToast("Status successfully updated!");
+                    logActivity(rowId, userName, oldStatus, status, reason);
+                    fetchData(); 
+                } else { showToast(res.message || "Failed to update status!", "error"); toggleLoader(false); }
+            }).catch(() => { toggleLoader(false); showToast("Server connection error!", "error"); });
+        }
+
+        function logActivity(rowId, userName, oldStatus, newStatus, reason) {
+            const log = {
+                timestamp: getCurrentFormattedDateTime(),
+                rowId: rowId,
+                name: userName,
+                old: oldStatus,
+                current: newStatus,
+                reason: reason
+            };
+            activityLogs.unshift(log); 
+            localStorage.setItem("admin_activity_logs", JSON.stringify(activityLogs));
+            renderActivityLogs();
+        }
+
+        function renderActivityLogs() {
+            const tbody = document.getElementById('activityTableBody');
+            tbody.innerHTML = '';
+            
+            if(activityLogs.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-400 font-bold">No history log records found.</td></tr>`;
+                return;
+            }
+
+            activityLogs.forEach((log, idx) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition";
+                tr.innerHTML = `
+                    <td class="p-3 text-center font-bold text-slate-400">${idx + 1}</td>
+                    <td class="p-3 text-slate-600 font-mono">${log.timestamp}</td>
+                    <td class="p-3 font-bold text-slate-800">${log.name} (Row ID: ${log.rowId})</td>
+                    <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-500">${log.old}</span></td>
+                    <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-indigo-700">${log.current}</span></td>
+                    <td class="p-3 text-slate-600 font-medium">${log.reason}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function clearActivityLogs() {
+            if (confirm("Are you sure you want to wipe out all logs?")) {
+                activityLogs = [];
+                localStorage.removeItem("admin_activity_logs");
+                renderActivityLogs();
+                showToast("Logs cleared successfully!");
+            }
+        }
+
+        function openDetailsModal(index) {
+            const st = studentsGlobalData[index];
+            if(!st) return;
+
+            document.getElementById('mRegDate').innerText = cleanStringData(st.date);
+            document.getElementById('mRegTime').innerText = cleanStringData(st.time);
+
+            document.getElementById('mName').innerText = st.name || "N/A";
+            document.getElementById('mMobile').innerText = st.mobile || "-";
+            document.getElementById('mEmail').innerText = st.email || "N/A";
+            document.getElementById('mGender').innerText = translateGender(st.gender);
+            document.getElementById('mAge').innerText = translateAge(st.age);
+            document.getElementById('mDob').innerText = cleanStringData(st.dob);
+            
+            document.getElementById('mPaid').innerText = translatePaymentStatus(st.bkash_paid);
+            document.getElementById('mBkash').innerText = st.bkash_number || "-";
+            document.getElementById('mTrx').innerText = st.txn_id || "N/A";
+            document.getElementById('mComment').innerText = st.comment || "No comment registered.";
+            document.getElementById('mAdminReason').innerText = st.admin_reason || "ok";
+
+            const statusLabel = document.getElementById('mStatus');
+            statusLabel.innerText = st.status || "Pending";
+            statusLabel.className = "rounded px-1.5 py-0.5 font-bold text-[9px] bg-slate-200 text-slate-700";
+            if(st.status === "Approved") statusLabel.className = "rounded px-1.5 py-0.5 font-bold text-[9px] bg-emerald-100 text-emerald-700";
+            if(st.status === "Suspended") statusLabel.className = "rounded px-1.5 py-0.5 font-bold text-[9px] bg-rose-100 text-rose-700";
+            if(st.status === "Inactive") statusLabel.className = "rounded px-1.5 py-0.5 font-bold text-[9px] bg-slate-100 text-slate-500";
+
+            document.getElementById('detailsModal').classList.replace('hidden', 'flex');
+        }
+
+        function closeDetailsModal() { document.getElementById('detailsModal').classList.replace('flex', 'hidden'); }
+
+        function exportFilteredToExcel() {
+            if(currentFilteredData.length === 0) { showToast('No data available to download!', "error"); return; }
+            const excelRows = [[
+                "Sl. No", "Date", "Time", "Name", "Email", "Mobile", "Gender", "Date of Birth", "Age",
+                "bKash Paid", "bKash Number", "Transaction ID", "Comment", "Status", "Admin Reason"
+            ]];
+            currentFilteredData.forEach((st, idx) => {
+                excelRows.push([
+                    idx + 1, cleanStringData(st.date), cleanStringData(st.time), st.name || "", st.email || "", st.mobile || "",
+                    translateGender(st.gender), cleanStringData(st.dob), translateAge(st.age), translatePaymentStatus(st.bkash_paid),
+                    st.bkash_number || "", st.txn_id || "", st.comment || "", st.status || "Pending", st.admin_reason || "ok"
+                ]);
+            });
+            const worksheet = XLSX.utils.aoa_to_sheet(excelRows);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Filtered_Data");
+            XLSX.writeFile(workbook, `AgdumBagdum_Filtered_Data.xlsx`);
+            showToast("Excel sheet downloaded!");
+        }
+
+        function generateFullRegisterPDF() {
+            if(studentsGlobalData.length === 0) { showToast("No data to download!", "error"); return; }
+            showToast("Generating Registration PDF...", "info");
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ orientation: 'l', unit: 'mm', format: 'a4' });
+            const pageWidth = doc.internal.pageSize.width;
+
+            const headers = [[
+                "Sl", "Date", "Time", "Name", "Email", "Mobile", "Gender", 
+                "DOB", "Age", "Paid", "bKash No", "Transaction ID", "Status", "Admin Note"
+            ]];
+
+            const rows = studentsGlobalData.map((st, idx) => [
+                idx + 1, cleanStringData(st.date), cleanStringData(st.time), st.name || "-", st.email || "-", st.mobile || "-",
+                translateGender(st.gender), cleanStringData(st.dob), translateAge(st.age), translatePaymentStatus(st.bkash_paid), st.bkash_number || "-",
+                st.txn_id || "-", st.status || "Pending", st.admin_reason || "ok"
+            ]);
+
+            doc.autoTable({
+                head: headers,
+                body: rows,
+                theme: 'grid',
+                styles: { fontSize: 7, cellPadding: 1.5 },
+                headStyles: { fillColor: [79, 70, 229], textColor: [255, 255, 255] },
+                margin: { top: 35, bottom: 15, left: 10, right: 10 },
+                didDrawPage: function (data) {
+                    doc.setFontSize(16);
+                    doc.text("Agdum Bagdum", pageWidth / 2, 12, { align: 'center' });
+                    doc.setFontSize(11);
+                    doc.text("Registration Summary Sheet (All Students)", pageWidth / 2, 20, { align: 'center' });
+                    doc.setFontSize(8);
+                    doc.text(`Download Time: ${getCurrentFormattedDateTime()}`, 10, doc.internal.pageSize.height - 8);
+                }
+            });
+
+            doc.save("Registration_Summary_AgdumBagdum.pdf");
+            showToast("PDF downloaded successfully!");
+        }
+
+        function generateAttendancePDF(dayLabel, dayTitle) {
+            const confirmedStudents = studentsGlobalData.filter(st => st.status === "Approved");
+            if(confirmedStudents.length === 0) { showToast("No approved students found!", "error"); return; }
+            
+            showToast(`Generating attendance list...`, "info");
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ orientation: 'l', unit: 'mm', format: 'a4' });
+            const pageWidth = doc.internal.pageSize.width;
+
+            const headers = [["Sl. No", "Student Name", "Mobile Number", "Email Address", "Gender", "Age", "Entry Time", "Signature", "Comments"]];
+            const rows = confirmedStudents.map((st, idx) => [
+                idx + 1, st.name || "-", st.mobile || "-", st.email || "-", translateGender(st.gender), translateAge(st.age), "", "", ""
+            ]);
+
+            doc.autoTable({
+                head: headers,
+                body: rows,
+                theme: 'grid',
+                styles: { fontSize: 9.5, cellPadding: 3, minCellHeight: 11 },
+                headStyles: { fillColor: [79, 70, 229], textColor: [255, 255, 255] },
+                columnStyles: {
+                    0: { cellWidth: 12, halign: 'center' },
+                    1: { cellWidth: 42 }, 2: { cellWidth: 32 }, 3: { cellWidth: 48 },
+                    4: { cellWidth: 20, halign: 'center' }, 5: { cellWidth: 20, halign: 'center' },
+                    6: { cellWidth: 25 }, 7: { cellWidth: 35 }, 8: { cellWidth: 43 }
+                },
+                margin: { top: 35, bottom: 15, left: 10, right: 10 },
+                didDrawPage: function (data) {
+                    doc.setFontSize(16);
+                    doc.text("Agdum Bagdum", pageWidth / 2, 12, { align: 'center' });
+                    doc.setFontSize(11);
+                    doc.text(`Attendance Master Sheet - ${dayTitle}`, pageWidth / 2, 20, { align: 'center' });
+                }
+            });
+
+            doc.save(`Attendance_Sheet_${dayLabel}.pdf`);
+            showToast("Attendance list downloaded!");
+        }
+    </script>
+</body>
+</html>
