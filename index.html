@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>আগডুম বাগডুম</title>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #6366f1; /* রয়াল ইন্ডিগো */
+            --accent-color: #f43f5e;    /* মডার্ন রোজ পিঙ্ক */
+            --bg-gradient: linear-gradient(135deg, #e0e7ff 0%, #fdf2f8 100%);
+            --text-dark: #1e1b4b;
+            --text-muted: #475569;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Hind Siliguri', sans-serif;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            color: var(--text-dark);
+        }
+
+        /* ব্যাকগ্রাউন্ড ওয়াটারমার্ক সায়েন্স এলিমেন্ট */
+        .bg-elements {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.06;
+            font-size: 4rem;
+        }
+        .bg-elements div { position: absolute; }
+        .elem-1 { top: 15%; left: 10%; animation: float 6s ease-in-out infinite; }
+        .elem-2 { top: 20%; right: 15%; animation: float 8s ease-in-out infinite 1s; }
+        .elem-3 { bottom: 20%; left: 15%; animation: float 7s ease-in-out infinite 0.5s; }
+        .elem-4 { bottom: 15%; right: 10%; animation: float 9s ease-in-out infinite 1.5s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(15deg); }
+        }
+
+        /* মেইন লোডার কার্ড */
+        .loader-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 50px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.06), 0 5px 15px rgba(15, 23, 42, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            text-align: center;
+            z-index: 2;
+            max-width: 500px;
+            width: 90%;
+            animation: cardPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes cardPop {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        /* টেক্সট ও টাইটেল */
+        .brand-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #1e1b4b;
+        }
+
+        .episode {
+            font-size: 1.3rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-left: 6px;
+        }
+
+        .event-by {
+            font-size: 1.05rem;
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-top: 5px;
+            margin-bottom: 25px;
+            letter-spacing: 0.5px;
+        }
+
+        .loading-text {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        /* ডট অ্যানিমেশন */
+        .dots span {
+            animation: blink 1.4s infinite both;
+            font-size: 1.2rem;
+        }
+        .dots span:nth-child(2) { animation-delay: .2s; }
+        .dots span:nth-child(3) { animation-delay: .4s; }
+
+        @keyframes blink {
+            0% { opacity: .2; }
+            20% { opacity: 1; }
+            100% { opacity: .2; }
+        }
+
+        /* নিচের প্রগ্রেস বার */
+        .progress-bar-container {
+            width: 100%;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            margin-top: 25px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            border-radius: 10px;
+            animation: fillProgress 3s linear forwards;
+        }
+
+        @keyframes fillProgress {
+            to { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ব্যাকগ্রাউন্ড সায়েন্স থিম এলিমেন্টস -->
+    <div class="bg-elements">
+        <div class="elem-1">⚛</div>
+        <div class="elem-2">π</div>
+        <div class="elem-3">💡</div>
+        <div class="elem-4">🔬</div>
+    </div>
+
+    <!-- মেইন লোডার বক্স -->
+    <div class="loader-card">
+        
+        <!-- শিরোনাম এবং পর্ব -->
+        <div>
+            <span class="brand-title">আগডুম বাগডুম</span>
+            <span class="episode">(পর্ব-২)</span>
+        </div>
+        
+        <!-- ইভেন্ট পার্টনার -->
+        <div class="event-by">Event by <strong>MASLab</strong> & <strong>SPSB</strong></div>
+
+        <!-- লোডিং মেসেজ -->
+        <div class="loading-text">
+            নিবন্ধন ফর্মে নিয়ে যাওয়া হচ্ছে
+            <div class="dots">
+                <span>.</span><span>.</span><span>.</span>
+            </div>
+        </div>
+
+        <!-- ভিজ্যুয়াল প্রগ্রেস বার -->
+        <div class="progress-bar-container">
+            <div class="progress-bar"></div>
+        </div>
+    </div>
+
+    <script>
+        // ৩ সেকেন্ড (৩০০০ মিলিসেকেন্ড) পর স্বয়ংক্রিয়ভাবে রিডাইরেক্ট হবে
+        setTimeout(function() {
+            window.location.href = "../Registration/";
+        }, 3000);
+    </script>
+</body>
+</html>
+
