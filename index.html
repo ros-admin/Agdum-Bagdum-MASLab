@@ -481,7 +481,7 @@
                 </div>
                 
                 <div class="form-group">
-                    <label>৬. বয়স (জন্ম তারিখ অনুযায়ী অটোমেটিক সিলেক্ট হবে):</label>
+                    <label>৬. বয়স:</label>
                     <div class="age-options-container">
                         <label class="age-radio-label" id="labelAge7">
                             <input type="radio" name="userAgeRadio" id="age7" value="7 Years"> ৭ বছর
@@ -635,7 +635,7 @@
             document.execCommand('copy');
             showToast('বিকাশ নম্বরটি কপি করা হয়েছে: ' + text, 'success', 'fa-clipboard-check');
         } catch (err) {
-            showToast('কপি করা যায়নি, অনুগ্রহ করে ম্যানুয়ালি দেখে লিখে নিন!', 'error', 'fa-exclamation-triangle');
+            showToast('দুংখিত! নাম্বারটি কপি করা যায়নি!', 'error', 'fa-exclamation-triangle');
         }
         document.body.removeChild(textArea);
     }
@@ -702,7 +702,7 @@
             targetRadio.parentElement.classList.add('selected-age');
         }
 
-        showToast(`ধন্যবাদ, বয়স (${finalAgeClass} বছর) এই ইভেন্টের জন্য উপযুক্ত।`, "success", "fa-user-check");
+        showToast(`অভিনন্দন, অংশগ্রহণকারীর বয়স ${finalAgeClass} বছর এবং সে এই ইভেন্টের জন্য উপযুক্ত।`, "success", "fa-user-check");
     }
 
     document.getElementById('registrationForm').addEventListener('submit', function(e) {
