@@ -465,7 +465,7 @@
 <div id="toastContainer" class="toast-container"></div>
 
 <div class="container">
-    <img src="./AgdumBagdum.png" alt="Banner" class="banner">
+    <img src="../AgdumBagdum.png" alt="Banner" class="banner">
     
     <div class="form-box">
         <div class="header-section">
@@ -475,10 +475,11 @@
         </div>
 
         <div class="details-btn-wrapper">
-            <button type="button" class="details-btn" onclick="openDetailsModal()">
-                <i class="fas fa-info-circle"></i> বিস্তারিত
-            </button>
-        </div>
+    <a href="../Details/" class="details-btn" style="text-decoration: none;">
+        <i class="fas fa-info-circle"></i> বিস্তারিত
+    </a>
+</div>
+
 
         <form id="registrationForm">
             <div class="form-section">
@@ -591,14 +592,6 @@
 
             <button type="submit" class="submit-btn" id="submitBtn">নিবন্ধন সম্পন্ন করুন</button>
         </form>
-    </div>
-</div>
-
-<div id="detailsModal" class="modal">
-    <div class="modal-content">
-        <h2 style="margin-bottom: 15px; color: var(--primary-color);" id="modalTitle">ইভেন্টের বিস্তারিত তথ্য</h2>
-        <div id="detailsPlaceholder" style="text-align: left; font-size: 0.95rem; color: #475569; max-height: 250px; overflow-y: auto; line-height: 1.6;"></div>
-        <button class="close-popup" onclick="closeDetailsModal()">বন্ধ করুন</button>
     </div>
 </div>
 
