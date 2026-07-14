@@ -398,7 +398,7 @@
 <div id="toastContainer" class="toast-container"></div>
 
 <div class="container">
-    <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80" alt="Banner" class="banner">
+    <img src="./AgdumBagdum.png" alt="Banner" class="banner">
     
     <div class="form-box">
         
@@ -410,27 +410,27 @@
 
         <div class="details-btn-wrapper">
             <button type="button" class="details-btn" onclick="openDetailsModal()">
-                <i class="fas fa-info-circle"></i> বিস্তারিত ও নিয়মাবলি
+                <i class="fas fa-info-circle"></i> বিস্তারিত
             </button>
         </div>
 
         <form id="registrationForm">
             
             <div class="form-section">
-                <div class="section-title"><i class="fas fa-user-circle" style="color:var(--primary-color);"></i> ১. অংশগ্রহণকারীর তথ্য</div>
+                <div class="section-title"><i class="fas fa-user-circle" style="color:var(--primary-color);"></i> অংশগ্রহণকারীর তথ্য</div>
                 
                 <div class="form-group">
                     <label>১. নাম (পূর্ণ নাম):</label>
-                    <input type="text" id="userName" placeholder="অংশগ্রহণকারীর নাম লিখুন" required>
+                    <input type="text" id="userName" placeholder="অংশগ্রহণকারীর নাম" required>
                 </div>
                 
                 <div class="form-group">
-                    <label>২. ইমেইল (অভিভাবকের):</label>
+                    <label>২. ইমেইল এড্রেস:</label>
                     <input type="email" id="userEmail" placeholder="example@mail.com" required>
                 </div>
                 
                 <div class="form-group">
-                    <label>৩. মোবাইল নম্বর (যোগাযোগের জন্য):</label>
+                    <label>৩. মোবাইল নম্বর:</label>
                     <input type="tel" id="userMobile" placeholder="01XXXXXXXXX" required>
                 </div>
                 
@@ -444,13 +444,13 @@
                 </div>
                 
                 <div class="form-group">
-                    <label>৫. জন্ম তারিখ (বয়সসীমা: ৬ থেকে ১১ বছরের শুরু পর্যন্ত):</label>
+                    <label>৫. জন্ম তারিখ (বয়সসীমা: ০৭ বছর থেকে ১০ বছর পর্যন্ত):</label>
                     <input type="date" id="userDOB" onchange="validateAndCalculateAge()" required>
                 </div>
                 
                 <div class="form-group">
-                    <label>৬. বয়স (জন্মতারিখ অনুযায়ী অটোমেটিক আসবে):</label>
-                    <input type="text" id="userAge" readonly placeholder="জন্ম তারিখ দিলে বয়স এখানে দেখাবে">
+                    <label>৬. বয়স:</label>
+                    <input type="text" id="userAge" readonly placeholder="অংশগ্রহণকারীর বয়স">
                 </div>
             </div>
 
@@ -530,7 +530,7 @@
     <div class="modal-content">
         <i class="fas fa-check-circle modal-icon"></i>
         <h2 style="color: #1e293b; margin-bottom: 10px;">নিবন্ধন সফল হয়েছে!</h2>
-        <p style="color: #475569; font-size: 1.1rem; line-height: 1.6;">আপনার প্রদানকৃত তথ্য সফলভাবে জমা হয়েছে। আমাদের প্রতিনিধি খুব শীঘ্রই আপনার সাথে যোগাযোগ করবেন।</p>
+        <p style="color: #475569; font-size: 1.1rem; line-height: 1.6;">আপনার প্রদানকৃত তথ্য সফলভাবে জমা হয়েছে। আমাদের প্রতিনিধি খুব শীঘ্রই আপনার সাথে যোগাযোগ করবেন। ধন্যবাদ!</p>
         <button class="close-popup" style="background:var(--primary-color);" onclick="closeSuccessModal()">ঠিক আছে</button>
     </div>
 </div>
@@ -644,7 +644,7 @@
             finalAgeClass = ageDouble.toString(); 
         }
 
-        document.getElementById('userAge').value = finalAgeClass + " বছর";
+        document.getElementById('userAge').value = finalAgeClass + " Years";
         showToast(`ধন্যবাদ, বয়স (${finalAgeClass} বছর) এই ইভেন্টের জন্য উপযুক্ত।`, "success", "fa-user-check");
     }
 
@@ -679,7 +679,7 @@
         };
 
         const submitBtn = document.querySelector('.submit-btn');
-        submitBtn.innerText = "প্রোসেসিং হচ্ছে...";
+        submitBtn.innerText = "তথ্য জমা হচ্ছে...";
         submitBtn.disabled = true;
 
         fetch(SCRIPT_URL, {
@@ -693,7 +693,7 @@
                 togglePaymentFields();
                 openSuccessModal(); 
             } else {
-                showToast("সার্ভার ত্রুটি ঘটেছে! আবার চেষ্টা করুন।", "error", "fa-exclamation-circle");
+                showToast("দুংখিত! সার্ভার ত্রুটি ঘটেছে! আবার চেষ্টা করুন।", "error", "fa-exclamation-circle");
             }
         })
         .catch(err => showToast("নেটওয়ার্ক সংযোগে সমস্যা হয়েছে!", "error", "fa-wifi"))
