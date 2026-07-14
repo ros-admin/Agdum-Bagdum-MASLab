@@ -485,8 +485,8 @@
                 <div class="section-title"><i class="fas fa-user-circle" style="color:var(--primary-color);"></i> অংশগ্রহণকারীর তথ্য</div>
                 
                 <div class="form-group">
-                    <label>১. নাম (পূর্ণ নাম):</label>
-                    <input type="text" id="userName" placeholder="অংশগ্রহণকারীর নাম" required>
+                    <label>১. পূর্ণ নাম (ইংরেজি):</label>
+                    <input type="text" id="userName" placeholder="অংশগ্রহণকারীর পূর্ণ নাম" required>
                 </div>
                 
                 <div class="form-group">
@@ -495,7 +495,7 @@
                 </div>
                 
                 <div class="form-group">
-                    <label>৩. মোবাইল নম্বর (অবশ্যই ১১টি সংখ্যা):</label>
+                    <label>৩. মোবাইল নম্বর:</label>
                     <input type="tel" id="userMobile" placeholder="01XXXXXXXXX" pattern="[0-9]{11}" maxlength="11" title="দয়া করে একটি সঠিক ১১ ডিজিটের মোবাইল নম্বর লিখুন" required>
                 </div>
                 
@@ -568,8 +568,8 @@
 
                 <div id="conditionalPaymentFields" class="hidden-fields">
                     <div class="form-group">
-                        <label>৮. বিকাশ নাম্বার (অবশ্যই ১১টি সংখ্যা):</label>
-                        <input type="text" id="bkashSenderNumber" placeholder="যে নাম্বার থেকে টাকা পাঠানো হয়েছে" pattern="[0-9]{11}" maxlength="11" title="দয়া করে একটি সঠিক ১১ ডিজিটের বিকাশ নম্বর লিখুন">
+                        <label>৮. বিকাশ নাম্বার:</label>
+                        <input type="number" id="bkashSenderNumber" placeholder="যে নাম্বার থেকে টাকা পাঠানো হয়েছে" pattern="[0-9]{11}" maxlength="11" title="দয়া করে একটি সঠিক ১১ ডিজিটের বিকাশ নম্বর লিখুন">
                     </div>
                     
                     <div class="form-group">
@@ -618,7 +618,7 @@
 <script src="popup.js"></script>
 
 <script>
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzeRAaTC5ti_Eqt3grsqQ0o-vt-RVyfgmtC1vBGdALfkPH5e8Pn3yKy1vl4dhEwhSYTPA/exec'; 
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxmQnr8D-fiyJrIWvQsyrVZkYhoPEGVRKP7A-9SOn00p85ADbcxB8EOCsF4wl0NSW0pxQ/exec'; 
 
     function showToast(message, type = 'info', icon = 'fa-info-circle') {
         const toastContainer = document.getElementById('toastContainer');
@@ -792,7 +792,7 @@
             console.error(err);
             screenLoader.style.display = "none";
             submitBtn.disabled = false;
-            showToast("নেটওয়ার্ক সংযোগে সমস্যা হয়েছে! আবার চেষ্টা করুন।", "error", "fa-wifi");
+            showToast("দুঃখিত! নেটওয়ার্ক সংযোগে সমস্যা হয়েছে! আবার চেষ্টা করুন।", "error", "fa-wifi");
         });
     });
 </script>
