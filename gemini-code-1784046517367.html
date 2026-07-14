@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>আগডুম বাগডুম - বিস্তারিত</title>
+    <!-- FontAwesome 6 Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-main: #f8fafc;          
+            --bg-card: #ffffff;          
+            --accent-red: #ff4500; 
+            --soft-blue: #3b82f6;        
+            --soft-blue-bg: #eff6ff;     
+            --text-dark: #1e293b;        
+            --text-muted: #64748b;       
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+            line-height: 1.8;
+            position: relative;
+            overflow-x: hidden;
+            width: 100%;
+            padding-top: 80px; 
+        }
+
+        /* সায়েন্স ওয়াটারমার্ক ব্যাকগ্রাউন্ড লেয়ার */
+        .science-bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 100px;
+            padding: 50px;
+            font-size: 3.5rem;
+            color: rgba(59, 130, 246, 0.05); 
+            pointer-events: none;
+            z-index: 1; 
+            user-select: none;
+            overflow: hidden;
+        }
+
+        .main-container, .navbar {
+            position: relative;
+            z-index: 2; 
+        }
+
+        .section-card {
+            position: relative;
+            z-index: 3;
+        }
+
+        /* ফিক্সড মিনিমালিস্ট হেডার */
+        .navbar {
+            background: #ffffff;
+            color: var(--text-dark);
+            padding: 0 25px;
+            height: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+            border-bottom: 2px solid var(--soft-blue);
+        }
+
+        /* ভাষা পরিবর্তনকারী বাটন */
+        .lang-switch-box {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .lang-btn {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            color: var(--text-dark);
+            padding: 5px 12px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: 0.2s;
+        }
+
+        .lang-btn.active {
+            background: var(--soft-blue);
+            color: #ffffff;
+            border-color: var(--soft-blue);
+        }
+
+        /* ক্রস বাটন */
+        .close-page-btn {
+            background: none;
+            border: none;
+            color: var(--accent-red);
+            font-size: 1.6rem;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+        .close-page-btn:hover {
+            background: #fff5f5;
+            transform: scale(1.1);
+        }
+        
+        /* Main Container */
+        .main-container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 30px 15px;
+            width: 100%;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            padding: 35px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            border: 1px solid #e2e8f0;
+            border-left: 6px solid var(--soft-blue); 
+            word-wrap: break-word;
+        }
+
+        /* শিরোনাম এবং স্ট্যাটাস */
+        .headline-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 12px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .headline-wrapper {
+            font-size: 1.45rem;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+        }
+        .headline-wrapper i { color: var(--accent-red); } 
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            border: 1px solid transparent;
+        }
+        .status-badge.running { background: #ef444415; color: #ef4444; border-color: #ef444430; }
+        .status-badge.success { background: #22c55e15; color: #22c55e; border-color: #22c55e30; }
+
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; animation: blinker 1.2s linear infinite; }
+        .status-dot.green { background-color: #22c55e; }
+        .status-dot.red { background-color: #ef4444; }
+        @keyframes blinker { 50% { opacity: 0; } }
+        
+        .strike-out { text-decoration: line-through !important; color: var(--text-muted) !important; opacity: 0.55; }
+
+        /* Intro Presentation */
+        .intro-box { border-left: 6px solid var(--accent-red); }
+        .intro-box h1 { color: var(--accent-red); font-size: 2.2rem; margin-bottom: 12px; font-weight: 800; }
+
+        /* Syllabus */
+        .syllabus-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
+        .syllabus-item { display: flex; flex-direction: column; background: #f8fafc; padding: 20px; border-radius: 10px; border: 1px solid #e2e8f0; }
+        .syllabus-item-header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; font-weight: 700; color: var(--text-dark); font-size: 1.1rem; }
+        .syllabus-item-icon { color: var(--accent-red); font-size: 1.2rem; width: 25px; display: flex; justify-content: center; flex-shrink: 0; }
+        .syllabus-item-body { color: var(--text-muted); font-size: 0.95rem; padding-left: 37px; }
+
+        /* ইনফো গ্রিড লেআউট */
+        .info-grid { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 20px; 
+            width: 100%; 
+        }
+        .info-node {
+            background: #f8fafc; padding: 20px; border-radius: 12px; border-top: 4px solid var(--soft-blue);
+            border-left: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0;
+        }
+        .info-node span { display: block; color: var(--text-muted); font-size: 0.9rem; margin-bottom: 6px; font-weight: 500; }
+        .info-node strong { font-size: 1.1rem; color: var(--text-dark); }
+        .small-note { font-size: 0.8rem; color: var(--text-muted); display: block; margin-top: 4px; }
+
+        .seat-full-area-box {
+            grid-column: span 2;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-top: 4px solid var(--accent-red);
+            padding: 20px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .seat-main-title { font-size: 0.9rem; color: var(--text-muted); font-weight: 500; margin-bottom: 4px; }
+        .seat-count-highlight { font-size: 1.3rem; color: var(--text-dark); font-weight: 700; margin-bottom: 10px; }
+        .seat-count-highlight span { color: var(--accent-red); }
+        
+        .inner-warning-box {
+            background: #fff5f5; border: 1px solid #fee2e2; padding: 8px 12px; border-radius: 6px;
+            font-size: 0.85rem; color: var(--text-dark); font-weight: 600; display: flex; align-items: center; gap: 8px;
+        }
+
+        /* bKash Widget */
+        .bkash-container { background: #fff0f6; border: 1px solid #fbcfe8; padding: 14px 18px; border-radius: 10px; margin: 15px 0; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+        .bkash-number-box { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .copy-btn { background: #ffffff; border: 1px solid #cbd5e1; color: var(--text-muted); padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 5px; }
+        .bkash-label { background: #d1156c; color: white; padding: 5px 14px; border-radius: 6px; font-weight: bold; font-size: 0.85rem; }
+
+        .toast-notification { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #334155; color: #fff; padding: 10px 24px; border-radius: 30px; font-size: 0.95rem; font-weight: 600; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: transform 0.3s ease; z-index: 2000; opacity: 0; }
+        .toast-notification.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+        .custom-ul { list-style: none; }
+        .custom-ul li { position: relative; padding-left: 32px; margin-bottom: 12px; }
+        .custom-ul li::before {
+            content: "\f00c"; font-family: "Font Awesome 6 Free"; font-weight: 900;
+            position: absolute; left: 0; top: 4px; color: #ffffff; background-color: var(--accent-red);
+            font-size: 0.65rem; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        }
+
+        .btn-holder { text-align: center; margin: 35px 0; }
+        .cta-button {
+            background: #ffffff; color: var(--accent-red); border: 2px solid var(--accent-red);
+            padding: 12px 35px; font-size: 1.15rem; font-weight: 700; text-decoration: none;
+            border-radius: 50px; transition: 0.3s; display: inline-block;
+        }
+        .cta-button:hover { background: #fff5f5; transform: translateY(-2px); }
+
+        /* কোটেশন বক্স ডিজাইন */
+        .classic-quote-box { 
+            background: var(--soft-blue-bg); 
+            border: 1px solid #dbeafe; 
+            border-left: 6px solid var(--soft-blue); 
+            padding: 35px; 
+            border-radius: 16px; 
+            text-align: center; 
+            font-size: 1.25rem; 
+            color: var(--text-dark); 
+            margin: 40px 0; 
+            position: relative;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.05);
+        }
+        .classic-quote-box p {
+            display: inline;
+            font-style: italic;
+            font-weight: 600;
+            position: relative;
+            z-index: 2;
+        }
+        .classic-quote-box i.quote-icon-left {
+            color: rgba(59, 130, 246, 0.2);
+            font-size: 2rem;
+            margin-right: 10px;
+            vertical-align: top;
+        }
+        .classic-quote-box i.quote-icon-right {
+            color: rgba(59, 130, 246, 0.2);
+            font-size: 2rem;
+            margin-left: 10px;
+            vertical-align: bottom;
+        }
+
+        .map-relative-frame { position: relative; width: 100%; height: 300px; border-radius: 14px; overflow: hidden; border: 1px solid #cbd5e1; margin-top: 20px; }
+        .map-middle-text-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(255, 255, 255, 0.96); color: var(--text-dark); padding: 12px 20px; border-radius: 10px; font-weight: 600; font-size: 0.95rem; text-align: center; border: 2px solid var(--soft-blue); width: 85%; max-width: 420px; pointer-events: none; }
+
+        /* Footer */
+        .footer-universe { background: #1e293b; color: #94a3b8; padding: 50px 15px 20px; margin-top: 60px; }
+        .footer-header-centered { text-align: center; color: #fff; font-size: 1.6rem; font-weight: 700; margin-bottom: 35px; }
+        .footer-header-centered span::after { content: ''; display: block; width: 40px; height: 3px; background: var(--accent-red); margin: 8px auto 0; border-radius: 2px; }
+        .footer-split-grid { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; max-width: 960px; margin: 0 auto; gap: 40px; }
+        .footer-branding-left { flex: 1; min-width: 260px; text-align: center; }
+        .footer-branding-left img { max-width: 190px; height: auto; background: #fff; padding: 10px; border-radius: 12px; }
+        .footer-links-right { flex: 1; min-width: 280px; display: flex; flex-direction: column; gap: 15px; }
+        .footer-links-right a { display: flex; align-items: flex-start; gap: 12px; color: #cbd5e1; text-decoration: none; font-size: 1rem; }
+        .footer-links-right i { color: var(--accent-red); margin-top: 5px; width: 20px; text-align: center; }
+        
+        .footer-bottom-credits { 
+            text-align: center; 
+            margin-top: 50px; 
+            padding-top: 25px; 
+            border-top: 1px solid rgba(255,255,255,0.08); 
+            font-size: 0.95rem; 
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .footer-bottom-credits a {
+            color: #38bdf8;
+            text-decoration: none;
+            font-weight: 700;
+            transition: 0.2s;
+            border-bottom: 1px dashed rgba(56, 189, 248, 0.4);
+            padding-bottom: 1px;
+        }
+        .footer-bottom-credits a:hover {
+            color: #60a5fa;
+            border-bottom-color: #60a5fa;
+            text-shadow: 0 0 8px rgba(96, 165, 250, 0.3);
+        }
+        .footer-bottom-credits strong {
+            color: #f1f5f9;
+        }
+
+        /* মোবাইল রেসপন্সিভনেস */
+        @media (max-width: 768px) {
+            body { padding-top: 70px; }
+            .section-card { padding: 20px; }
+            .info-grid { grid-template-columns: 1fr; gap: 15px; }
+            .seat-full-area-box { grid-column: span 1; }
+            .headline-container { flex-direction: column; align-items: flex-start; gap: 8px; }
+            .footer-split-grid { flex-direction: column; text-align: center; }
+            .footer-links-right a { justify-content: center; }
+            .science-bg-overlay { grid-template-columns: repeat(2, 1fr); gap: 60px; padding: 20px; font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- সায়েন্স ব্যাকগ্রাউন্ড লেয়ার -->
+    <div class="science-bg-overlay">
+        <div>π</div><div>⚛</div><div>Σ</div><div>📚</div>
+        <div>∫</div><div>🔭</div><div>√</div><div>💡</div>
+    </div>
+
+    <!-- মিনিমালিস্ট ফিক্সড হেডার -->
+    <nav class="navbar">
+        <div class="lang-switch-box">
+            <button class="lang-btn active" id="btnBn" onclick="switchLanguage('bn')">BN</button>
+            <button class="lang-btn" id="btnEn" onclick="switchLanguage('en')">EN</button>
+        </div>
+        <a href="index.html" class="close-page-btn" id="closeBtnTitle" title="বন্ধ করুন"><i class="fas fa-times"></i></a>
+    </nav>
+
+    <!-- Main Content Hub -->
+    <div class="main-container">
+        
+        <!-- Section: পরিচিতি -->
+        <div class="section-card intro-box">
+            <h1 id="txtIntroTitle">ছুটির দিনগুলোকে আনন্দে শেখা!</h1>
+            <p style="font-size: 1.2rem; font-weight: 600; margin-bottom: 15px;" id="txtIntroSub">নানা সময়ে আমাদের হরেক রকমের আয়োজন ছিলো শিশুদেরকে ঘিরে। সেসব আয়োজন থেকে বাছাই করে ছুটির দিনগুলোকে আনন্দে শেখার মাঝে ব্যয় করতে ম্যাসল্যাব এবং বাংলাদেশ বিজ্ঞান জনপ্রিয়করণ সমিতির যৌথ আয়োজন “আগডুম বাগডুম”।</p>
+            <p id="txtIntroDesc">রবীন্দ্রনাথ ঠাকুরের আগডুম বাগডুম ছড়ার মতো সৈন্য-সামন্ত নিয়ে বিশেষ কোনো আয়োজন না থাকলেও বিচক্ষণ হবার জন্য কৌশলগত চিন্তা করে ধাঁধা সমাধানের পথ খোঁজার সুযোগ রয়েছে এই কর্মশালায়।</p>
+        </div>
+
+        <!-- Section: কারা অংশ নিতে পারবে -->
+        <div class="section-card">
+            <div class="headline-container">
+                <div class="headline-wrapper"><i class="fas fa-user-astronaut"></i> <span id="txtAudienceTitle">কারা অংশ নিতে পারবে?</span></div>
+            </div>
+            <p id="txtAudienceDesc"><strong>আগ্রহী ৭ থেকে ১০ বছর বয়সী শিশুরা</strong> এই মজাদার চিন্তন ও বুদ্ধিবৃত্তিক কর্মশালায় অংশ নিতে পারবে।</p>
+        </div>
+
+        <!-- Section: কর্মশালার বিষয়বস্তু -->
+        <div class="section-card">
+            <div class="headline-container">
+                <div class="headline-wrapper"><i class="fas fa-brain"></i> <span id="txtTopicsTitle">আয়োজনের বিষয়বস্তু</span></div>
+            </div>
+            <p style="font-size: 1.1rem; font-weight: bold; color: var(--text-dark);" id="txtTopicsDesc"><i class="fas fa-puzzle-piece" style="color:var(--accent-red)"></i> ট্যানগ্রাম, সুডোকু, রুবিকস কিউব, অরিগামি এবং শব্দজটের মতো বুদ্ধিবৃত্তিক চর্চা</p>
+        </div>
+
+        <!-- Section: কর্মশালায় যা যা শেখানো হবে -->
+        <div class="section-card">
+            <div class="headline-container">
+                <div class="headline-wrapper"><i class="fas fa-cubes"></i> <span id="txtLessonsTitle">সেশনভিত্তিক বিস্তারিত বিবরণ</span></div>
+            </div>
+            <div class="syllabus-grid">
+                <div class="syllabus-item">
+                    <div class="syllabus-item-header">
+                        <div class="syllabus-item-icon"><i class="fas fa-shapes"></i></div>
+                        <span id="topic1Title">ট্যানগ্রাম ছট</span>
+                    </div>
+                    <div class="syllabus-item-body" id="topic1Desc">বিভিন্ন ধরনের জ্যামিতিক আকৃতির সাথে পরিচিত হতে পারবে হাতে কলমে। শুধু তাই নয়, এগুলো ব্যবহার করে নিজের ইচ্ছামতো বিভিন্ন আকৃতি তৈরি করতে পারবে। যেমন: খরগোশ থেকে শুরু করে প্লেন পর্যন্ত।</div>
+                </div>
+                
+                <div class="syllabus-item">
+                    <div class="syllabus-item-header">
+                        <div class="syllabus-item-icon"><i class="fas fa-table-cells"></i></div>
+                        <span id="topic2Title">সুডোকু</span>
+                    </div>
+                    <div class="syllabus-item-body" id="topic2Desc">সুডোকু আসলে একটি পাজেল বা ধাঁধা। গণিতের মাধ্যমে এর সমাধান করা হয়। না–গণিতের কথা শুনেই ভয় পাবেন না। গণিতের খুব সাধারণ বিষয় সংখ্যা নিয়ে এর খেলা, তাও আবার ১-৯ পর্যন্ত অঙ্ক দিয়েই সমাধান করা যায়।</div>
+                </div>
+                
+                <div class="syllabus-item">
+                    <div class="syllabus-item-header">
+                        <div class="syllabus-item-icon"><i class="fas fa-cube"></i></div>
+                        <span id="topic3Title">কিউবের ছট</span>
+                    </div>
+                    <div class="syllabus-item-body" id="topic3Desc">কিউব এক ধরণের ত্রিমাত্রিক পাজেল। বিভিন্ন সাইজ এবং আকৃতির হয়ে থাকে। আবিষ্কারকের নাম অনুযায়ী রুবিকস কিউব নামেই পরিচিত। বিভিন্ন পদ্ধতি অনুসরণ করে সমাধান করা যায় এসব কিউব। কর্মশালায় ২*২ কিউব দিয়ে শুরু করে ৩*৩ শেখানো হবে।</div>
+                </div>
+                
+                <div class="syllabus-item">
+                    <div class="syllabus-item-header">
+                        <div class="syllabus-item-icon"><i class="fas fa-dove"></i></div>
+                        <span id="topic4Title">অরিগামি</span>
+                    </div>
+                    <div class="syllabus-item-body" id="topic4Desc">কাগজের নৌকা, পাখি, flower তো আমরা সবাই বানিয়েছি। জাপানিরা কাগজ দিয়ে এসব তৈরিকে শিল্পের পর্যায়ে নিয়ে গেছে। কোনো ধরণের আঠা, পিন কিংবা এযাপন কিছু ব্যবহার না করেই সুন্দর সুন্দর সব জিনিস বানানো সম্ভব।</div>
+                </div>
+
+                <div class="syllabus-item">
+                    <div class="syllabus-item-header">
+                        <div class="syllabus-item-icon"><i class="fas fa-font"></i></div>
+                        <span id="topic5Title">শব্দজট</span>
+                    </div>
+                    <div class="syllabus-item-body" id="topic5Desc">পাজেল সমাধান করে শব্দ তৈরি করা শিখতে চাও? এটা হতে পারে বাংলা, ইংরেজি, বৈজ্ঞানিক বা জ্যামেতিক কিছু; কিন্তু মজার। সবাই অক্ষর চিনলেও অতি স্বল্প সময়ে ধাঁধা সমাধান করতে করতে কিন্তু নতুন শব্দ তৈরি করতে পারে না। তুমি যদি আগ্রহী হয়ে থাকো শব্দজটে পারদর্শী হতে, জয়েন করো “আগডুম-বাগডুমে”।</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section: নিবন্ধনের সময়সূচি -->
+        <div class="section-card">
+            <div class="headline-container">
+                <div class="headline-wrapper"><i class="fas fa-calendar-days"></i> <span id="txtScheduleTitle">নিবন্ধনের সময়সূচি ও যোগ্যতা</span></div>
+                <div id="regStatusBadge" class="status-badge">
+                    <span id="regStatusDot" class="status-dot"></span>
+                    <span id="regStatusText">লোড হচ্ছে...</span>
+                </div>
+            </div>
+
+            <div class="info-grid">
+                <div class="info-node">
+                    <span id="nodeEligibleLbl"><i class="fas fa-graduation-cap"></i> নিবন্ধনের যোগ্যতা</span>
+                    <strong id="nodeEligibleTxt">আগ্রহী ৭ থেকে ১০ বছর বয়সী শিশুরা</strong>
+                </div>
+                <div class="info-node" id="endDateNode">
+                    <span id="nodeDeadlineLbl"><i class="fas fa-calendar-xmark"></i> নিবন্ধনের শেষ সময়</span>
+                    <strong id="endDateTxt">২৩ জুলাই, ২০২৬; রাত ১১:৫৯ টা</strong>
+                </div>
+                <div class="info-node">
+                    <span id="nodeFeeLbl"><i class="fas fa-wallet"></i> নিবন্ধন ফি</span>
+                    <strong id="nodeFeeTxt">২০৪০/- টাকা মাত্র <span class="small-note">(বিকাশ চার্জসহ সম্পূর্ণ ফি অগ্রিম প্রযোজ্য)</span></strong>
+                </div>
+                
+                <div class="seat-full-area-box">
+                    <div class="seat-main-title" id="nodeSeatLbl"><i class="fas fa-chair" style="color:var(--accent-red)"></i> আসন সংখ্যা</div>
+                    <div class="seat-count-highlight" id="nodeSeatTxt">মাত্র <span>১২</span> টি</div>
+                    <div class="inner-warning-box">
+                        <i class="fas fa-triangle-exclamation" style="color:var(--accent-red)"></i>
+                        <span id="nodeSeatWarn">“আগে এলে আগে পাবে” ভিত্তিতে আসন শেষ হবার আগ পর্যন্ত রেজিস্ট্রেশন করার সুযোগ থাকবে।</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="btn-holder" style="margin-top: 35px;">
+                <a href="../Registration/" class="cta-button" id="btnRegLink"><i class="fas fa-file-signature"></i> রেজিস্ট্রেশন ফর্ম পূরণ করতে এখানে ক্লিক করুন</a>
+            </div>
+        </div>
+
+        <!-- Section: কর্মশালার সময়সূচি ও ভেন্যু -->
+        <div class="section-card">
+            <div class="headline-container">
+                <div class="headline-wrapper"><i class="fas fa-map-pinned"></i> <span id="txtTimelineTitle">कर्मশালার সময়সূচি ও ভেন্যু</span></div>
+                <div id="workshopStatusBadge" class="status-badge">
+                    <span id="workshopStatusDot" class="status-dot"></span>
+                    <span id="workshopStatusText">লোড হচ্ছে...</span>
+                </div>
+            </div>
+
+            <div class="info-grid" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-bottom: 20px;">
+                <div class="info-node">
+                    <span id="nodeDatesLbl"><i class="fas fa-calendar-days"></i> আয়োজনের তারিখসমূহ</span>
+                    <strong id="wsDatesTxt">২৪, ২৫, ২৮ ও ৩১ জুলাই এবং ১ আগস্ট ২০২৬</strong>
+                </div>
+                <div class="info-node">
+                    <span id="nodeTimeLbl"><i class="fas fa-clock"></i> দৈনিক সময়সূচী</span>
+                    <strong id="nodeTimeTxt">বিকেল ৩:০০ টা – ৫:০০ টা <span class="small-note">(২ ঘণ্টার সেশন)</span></strong>
+                </div>
+            </div>
+
+            <div class="info-grid" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-bottom: 25px;">
+                <div class="seat-full-area-box" style="grid-column: span 1; border-top: 4px solid var(--soft-blue);">
+                    <div class="seat-main-title" style="color:var(--soft-blue); font-weight:bold;" id="nodeVenueLbl"><i class="fas fa-hotel"></i> কর্মশালার ভেন্যু</div>
+                    <p style="font-size: 0.95rem; font-weight: 600;" id="nodeVenueTxt">ম্যাসল্যাব, ১২ তলা, গ্রীন সিটি সেন্টার (আবাহনী মাঠের বিপরীত পাশে), ৭৫৮ সাত মসজিদ রোড, ধানমন্ডি, ঢাকা-১২০৫।</p>
+                </div>
+            </div>
+
+            <div class="map-relative-frame">
+                <iframe src="https://www.google.com/maps/embed/v1/place?q=Level%2012%2C%20MASLab%2C%20Satmasjid%20Road%2C%20Dacca&key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                <div class="map-middle-text-overlay">
+                    <i class="fas fa-location-dot" style="color:var(--accent-red)"></i> Level 12, MASLab, 758 Satmasjid Road, Dhaka 1205
+                </div>
+            </div>
+        </div>
+
+        <!-- Section: নিবন্ধনের নিয়ম -->
+        <div class="section-card">
+            <div class="headline-container">
+                <div class="headline-wrapper"><i class="fas fa-file-invoice"></i> <span id="txtRulesTitle">যেভাবে রেজিস্ট্রেশন করা যাবে</span></div>
+            </div>
+            <ol class="custom-ul" style="display:flex; flex-direction:column; gap:12px;">
+                <li id="rule1">কোর্সের সম্পূর্ণ ফি অগ্রিম বিকাশের মাধ্যমে অথবা ম্যাসল্যাবের অফিসে এসে প্রদান করতে হবে। (ম্যাসল্যাবের অফিসে আসার পূর্বে অবশ্যই যোগাযোগ করে আসতে হবে)।</li>
+                <li><span id="rule2Lbl">নিবন্ধন ফি প্রদান করার বিকাশ নম্বর:</span>
+                    <div class="bkash-container">
+                        <div class="bkash-number-box">
+                            <div>
+                                <span style="font-size:0.8rem; color:var(--text-muted); display:block;" id="bkashAccType">বিকাশ পেমেন্ট অ্যাকাউন্ট</span>
+                                <strong id="bkashNo">01730-716522</strong>
+                            </div>
+                            <button class="copy-btn" onclick="copyNumber()">
+                                <i class="far fa-copy" id="copyIcon"></i> <span id="copyTxt">কপি</span>
+                            </button>
+                        </div>
+                        <span class="bkash-label">bKash Payment</span>
+                    </div>
+                </li>
+                <li id="rule3">বিকাশের <strong>পেমেন্ট (Payment)</strong> অপশন ব্যবহার করে <strong>২০৪০ টাকা</strong> (বিকাশ চার্জসহ) সেন্ড করতে হবে।</li>
+                <li id="rule4">নিবন্ধনের জন্য বিকাশের ফিরতি ম্যাসেজের ট্রাঞ্জেকশন আইডিটি (Trx ID: *******) সংরক্ষণ করতে হবে।</li>
+                <li id="rule5">এরপর অনলাইন ফর্মটি পূরণ করার সময় <strong>bKash Transaction ID:......</strong> ঘরে ট্রাঞ্জেকশন আইডিটি লিখে ফর্ম সাবমিট করতে হবে।</li>
+                <li id="rule6">ফর্ম পূরণের ২৪ ঘণ্টার মধ্যে এসএমএসের মাধ্যমে নিবন্ধন নিশ্চিত করা হবে। ২৪ ঘণ্টার মধ্যে নিবন্ধন কনফার্মেশন না পেলে আমাদের সঙ্গে যোগাযোগ করতে হবে।</li>
+            </ol>
+        </div>
+
+        <!-- Section: সুযোগ সুবিধা -->
+        <div class="section-card">
+            <div class="headline-container">
+                <div class="headline-wrapper"><i class="fas fa-award"></i> <span id="txtPerksTitle">কর্মশালায় যা যা থাকছে</span></div>
+            </div>
+            <ul class="custom-ul">
+                <li id="perk1">কোর্স সফলভাবে শেষ করলে অংশগ্রহণকারীকে সার্টিফিকেট প্রদান করা হবে।</li>
+                <li id="perk2">উপকরণ এবং আনুষাঙ্গিক কোর্স ম্যাটেরিয়াল ম্যাসল্যাব থেকে সরবরাহ করা হবে।</li>
+                <li id="perk3">০২ ঘণ্টার সেশন এবং ১০ মিনিটের বিরতিতে হাল্কা নাস্তা প্রদান করা হবে।</li>
+            </ul>
+        </div>
+
+        <!-- কোটেশন বক্স -->
+        <div class="classic-quote-box">
+            <i class="fas fa-quote-left quote-icon-left"></i>
+            <p id="txtQuote">ছুটির দিনগুলোকে আনন্দে শেখার মাঝে ব্যয় করি— কৌশলগত চিন্তা করে ধাঁধা সমাধানের পথ খুঁজি</p>
+            <i class="fas fa-quote-right quote-icon-right"></i>
+        </div>
+    </div>
+
+    <div class="toast-notification" id="toastBox">নম্বরটি কপি হয়েছে!</div>
+
+    <!-- Footer -->
+    <footer class="footer-universe">
+        <div class="footer-header-centered"><span id="txtFooterContact">যোগাযোগ</span></div>
+        <div class="footer-split-grid">
+            <div class="footer-branding-left">
+                <img src="https://maslab.org/wp-content/uploads/2024/03/MASLab-Logo-1-1.png" alt="MASLab Logo">
+            </div>
+            <div class="footer-links-right">
+                <a href="tel:+8801730716522"><i class="fas fa-phone"></i> <span>+880 1730-716522 (ম্যাসল্যাব)</span></a>
+                <a href="mailto:info@maslab.org"><i class="fas fa-envelope"></i> <span>info@maslab.org</span></a>
+                <a href="https://maps.app.goo.gl/7odgJBYMAyEisKgX8"><i class="fas fa-street-view"></i> <span id="txtFooterAddress">১২ তলা, গ্রীন সিটি সেন্টার (আবাহনী মাঠের বিপরীত পাশে), ৭৫৮ সাত মসজিদ রোড, ধানমন্ডি, ঢাকা-১২০৫।</span></a>
+            </div>
+        </div>
+        
+        <div class="footer-bottom-credits">
+            <p>Jointly Organized by <a href="https://maslab.org/" target="_blank">MASLab</a> & Bangladesh Science Popularization Association</p>
+            <p>Designed & Developed by <a href="https://github.com/utsabsarker" target="_blank">UTSAB SARKER</a></p>
+        </div>
+    </footer>
+
+    <script>
+        let currentLang = 'bn';
+
+        const langData = {
+            bn: {
+                closeTitle: "বন্ধ করুন",
+                introTitle: "ছুটির দিনগুলোকে আনন্দে শেখা!",
+                introSub: "নানা সময়ে আমাদের হরেক রকমের আয়োজন ছিলো শিশুদেরকে ঘিরে। সেসব আয়োজন থেকে বাছাই করে ছুটির দিনগুলোকে আনন্দে শেখার মাঝে ব্যয় করতে ম্যাসল্যাব এবং বাংলাদেশ বিজ্ঞান জনপ্রিয়করণ সমিতির যৌথ আয়োজন “আগডুম বাগডুম”।",
+                introDesc: "রবীন্দ্রনাথ ঠাকুরের আগডুম বাগডুম ছড়ার মতো সৈন্য-সামন্ত নিয়ে বিশেষ কোনো আয়োজন না থাকলেও বিচক্ষণ হবার জন্য কৌশলগত চিন্তা করে ধাঁধা সমাধানের পথ খোঁজার সুযোগ রয়েছে এই কর্মশালায়।",
+                audTitle: "কারা অংশ নিতে পারবে?",
+                audDesc: "<strong>আগ্রহী ৭ থেকে ১০ বছর বয়সী শিশুরা</strong> এই মজাদার চিন্তন ও বুদ্ধিবৃত্তিক কর্মশালায় অংশ নিতে পারবে।",
+                topTitle: "আয়োজনের বিষয়বস্তু",
+                topDesc: "<i class='fas fa-puzzle-piece' style='color:var(--accent-red)'></i> ট্যানগ্রাম, সুডোকু, রুবিকস কিউব, অরিগামি এবং শব্দজটের মতো বুদ্ধিবৃত্তিক চর্চা",
+                lesTitle: "সেশনভিত্তিক বিস্তারিত বিবরণ",
+                t1T: "ট্যানগ্রাম ছট",
+                t1D: "বিভিন্ন ধরনের জ্যামিতিক আকৃতির সাথে পরিচিত হতে পারবে হাতে কলমে। শুধু তাই নয়, এগুলো ব্যবহার করে নিজের ইচ্ছামতো বিভিন্ন আকৃতি তৈরি করতে পারবে। যেমন: খরগোশ থেকে শুরু করে প্লেন পর্যন্ত।",
+                t2T: "সুডোকু",
+                t2D: "সুডোকু আসলে একটি পাজেল বা ধাঁধা। গণিতের মাধ্যমে এর সমাধান করা হয়। না–গণিতের কথা শুনেই ভয় পাবেন না। গণিতের খুব সাধারণ বিষয় সংখ্যা নিয়ে এর খেলা, তাও আবার ১-৯ পর্যন্ত অঙ্ক দিয়েই সমাধান করা যায়।",
+                t3T: "কিউবের ছট",
+                t3D: "কিউব এক ধরণের ত্রিমাত্রিক পাজেল। বিভিন্ন সাইজ এবং আকৃতির হয়ে থাকে। আবিষ্কারকের নাম অনুযায়ী রুবিকস কিউব নামেই পরিচিত। বিভিন্ন পদ্ধতি অনুসরণ করে সমাধান করা যায় এসব কিউব। কর্মশালায় ২*২ কিউব দিয়ে শুরু করে ৩*৩ শেখানো হবে।",
+                t4T: "অরিগামি",
+                t4D: "কাগজের নৌকা, পাখি, ফুল তো আমরা সবাই বানিয়েছি। জাপানিরা কাগজ দিয়ে এসব তৈরিকে শিল্পের পর্যায়ে নিয়ে গেছে। কোনো ধরণের আঠা, পিন কিংবা এ জাতীয় কিছু ব্যবহার না করেই সুন্দর সুন্দর সব জিনিস বানানো সম্ভব।",
+                t5T: "শব্দজট",
+                t5D: "পাজেল সমাধান করে শব্দ তৈরি করা শিখতে চাও? এটা হতে পারে বাংলা, ইংরেজি, বৈজ্ঞানিক বা জ্যামেতিক কিছু; কিন্তু মজার। সবাই অক্ষর চিনলেও অতি স্বল্প সময়ে ধাঁধা সমাধান করতে করতে কিন্তু নতুন শব্দ তৈরি করতে পারে না। তুমি যদি আগ্রহী হয়ে থাকো শব্দজটে পারদর্শী হতে, জয়েন করো “আগডুম-বাগডুমে”।",
+                schTitle: "নিবন্ধনের সময়সূচি ও যোগ্যতা",
+                nEligL: "<i class='fas fa-graduation-cap'></i> নিবন্ধনের যোগ্যতা",
+                nEligT: "আগ্রহী ৭ থেকে ১০ বছর বয়সী শিশুরা",
+                nDeadL: "<i class='fas fa-calendar-xmark'></i> নিবন্ধনের শেষ সময়",
+                nDeadT: "২৩ জুলাই, ২০২৬; রাত ১১:৫৯ টা",
+                nFeeL: "<i class='fas fa-wallet'></i> নিবন্ধন ফি",
+                nFeeT: "২০৪০/- টাকা মাত্র <span class='small-note'>(বিকাশ চার্জসহ সম্পূর্ণ ফি অগ্রিম প্রযোজ্য)</span>",
+                nSeatL: "<i class='fas fa-chair' style='color:var(--accent-red)'></i> আসন সংখ্যা",
+                nSeatT: "মাত্র <span>১২</span> টি",
+                nSeatW: "“আগে এলে আগে পাবে” ভিত্তিতে আসন শেষ হবার আগ পর্যন্ত রেজিস্ট্রেশন করার সুযোগ থাকবে।",
+                btnReg: "<i class='fas fa-file-signature'></i> রেজিস্ট্রেশন ফর্ম পূরণ করতে এখানে ক্লিক করুন",
+                timeTitle: "কর্মশালার সময়সূচি ও ভেন্যু",
+                nDatesL: "<i class='fas fa-calendar-days'></i> আয়োজনের তারিখসমূহ",
+                nDatesT: "২৪, ২৫, ২৮ ও ৩১ জুলাই এবং ১ আগস্ট ২০২৬",
+                nTimeL: "<i class='fas fa-clock'></i> দৈনিক সময়সূচী",
+                nTimeT: "বিকেল ৩:০০ টা – ৫:০০ টা <span class='small-note'>(২ ঘণ্টার সেশন)</span>",
+                nVenueL: "<i class='fas fa-hotel'></i> কর্মশালার ভেন্যু",
+                nVenueT: "ম্যাসল্যাব, ১২ তলা, গ্রীন সিটি সেন্টার (আবাহনী মাঠের বিপরীত পাশে), ৭৫৮ সাত মসজিদ রোড, ধানমন্ডি, ঢাকা-১২০৫।",
+                rulTitle: "যেভাবে রেজিস্ট্রেশন করা যাবে",
+                r1: "কোর্সের সম্পূর্ণ ফি অগ্রিম বিকাশের মাধ্যমে অথবা ম্যাসল্যাবের অফিসে এসে প্রদান করতে হবে। (ম্যাসল্যাবের অফিসে আসার পূর্বে অবশ্যই যোগাযোগ করে আসতে হবে)।",
+                r2L: "নিবন্ধন ফি প্রদান করার বিকাশ নম্বর:",
+                bkType: "বিকাশ পেমেন্ট অ্যাকাউন্ট",
+                cpTxt: "কপি",
+                r3: "বিকাশের <strong>পেমেন্ট (Payment)</strong> অপশন ব্যবহার করে <strong>২০৪০ টাকা</strong> (বিকাশ চার্জসহ) সেন্ড করতে হবে।",
+                r4: "নিবন্ধনের জন্য বিকাশের ফিরতি ম্যাসেজের ট্রাঞ্জেকশন আইডিটি (Trx ID: *******) সংরক্ষণ করতে হবে।",
+                r5: "এরপর অনলাইন ফর্মটি পূরণ করার সময় <strong>bKash Transaction ID:......</strong> ঘরে ট্রাঞ্জেকশন আইডিটি লিখে ফর্ম সাবমিট করতে হবে।",
+                r6: "ফর্ম পূরণের ২৪ ঘণ্টার মধ্যে এসএমএসের মাধ্যমে নিবন্ধন নিশ্চিত করা হবে। ২৪ ঘণ্টার মধ্যে নিবন্ধন কনফার্মেশন না পেলে আমাদের সঙ্গে যোগাযোগ করতে হবে।",
+                prkTitle: "কর্মশালায় যা যা থাকছে",
+                p1: "কোর্স সফলভাবে শেষ করলে অংশগ্রহণকারীকে সার্টিফিকেট প্রদান করা হবে।",
+                p2: "উপকরণ এবং আনুষাঙ্গিক কোর্স ম্যাটেরিয়াল ম্যাসল্যাব থেকে সরবরাহ করা হবে।",
+                p3: "০২ ঘণ্টার সেশন এবং ১০ মিনিটের বিরতিতে হাল্কা নাস্তা প্রদান করা হবে।",
+                quote: "ছুটির দিনগুলোকে আনন্দে শেখার মাঝে ব্যয় করি— কৌশলগত চিন্তা করে ধাঁধা সমাধানের পথ খুঁজি",
+                fContact: "যোগাযোগ",
+                fAddr: "১২ তলা, গ্রীন সিটি সেন্টার (আবাহনী মাঠের বিপরীত পাশে), ৭৫৮ সাত মসজিদ রোড, ধানমন্ডি, ঢাকা-১২০৫।",
+                toast: "নম্বরটি কপি হয়েছে!"
+            },
+            en: {
+                closeTitle: "Close",
+                introTitle: "Joyful Learning on Holidays!",
+                introSub: "At various times, we have organized various events for children. Among these events, we have chosen to spend the day's vacation joyfully learning through a collaboration between MASLab and the Society for the Popularization of Science, Bangladesh, in our new program, 'Agdum Bagdum'.",
+                introDesc: "Although there won't be any special arrangements like a parade from Rabindranath Tagore’s Agdum Bagdum, there is still an opportunity to explore skillful thinking and find paths to puzzle-solving for enlightenment.",
+                audTitle: "Who can participate?",
+                audDesc: "<strong>Enthusiastic children aged 7 to 10</strong> can take part in this fun-filled thinking and cognitive workshop.",
+                topTitle: "Sessions & Content",
+                topDesc: "<i class='fas fa-puzzle-piece' style='color:var(--accent-red)'></i> Cognitive practices including Tangrams, Sudoku, Rubik's Cube, Origami, and Word Puzzles.",
+                lesTitle: "Detailed Session Overview",
+                t1T: "Tangram",
+                t1D: "You will become familiar with various geometric shapes and create different shapes of your choice using pen and paper. Starting from rabbits to planes, you'll learn a variety of shapes.",
+                t2T: "Sudoku",
+                t2D: "Sudoku is essentially a puzzle or challenge. It involves solving through mathematics. Don't be afraid to just hear the word math. It's a very simple numerical game in which you solve using numbers from 1 to 9.",
+                t3T: "Cube",
+                t3D: "The cube is a type of three-dimensional puzzle. It comes in various sizes and shapes. Named after its inventor, Rubik's Cube is the most famous. You can solve these cubes by following various methods. The workshop will start with a 2x2 cube and progress to 3x3.",
+                t4T: "Origami",
+                t4D: "We've all made boats, birds, flowers etc with paper. The Japanese have taken these creations to the level of art using paper. You can make beautiful things without using any tools or glue.",
+                t5T: "Word Puzzle",
+                t5D: "Want to learn to create words by solving puzzles? It could be in Bengali, English, or any scientific word! You can take the first step towards solving word puzzles from this workshop.",
+                schTitle: "Registration Schedule & Eligibility",
+                nEligL: "<i class='fas fa-graduation-cap'></i> Eligibility",
+                nEligT: "Enthusiastic children aged 7 to 10",
+                nDeadL: "<i class='fas fa-calendar-xmark'></i> Deadline",
+                nDeadT: "July 23, 2026; 11:59 PM",
+                nFeeL: "<i class='fas fa-wallet'></i> Registration Fee",
+                nFeeT: "2040/- Taka Only <span class='small-note'>(Full advance fee required including bKash charges)</span>",
+                nSeatL: "<i class='fas fa-chair' style='color:var(--accent-red)'></i> Available Seats",
+                nSeatT: "Only <span>12</span> Seats",
+                nSeatW: "Registration is based on a first-come-first-served basis until the seats are filled.",
+                btnReg: "<i class='fas fa-file-signature'></i> Click here to fill out the Registration Form",
+                timeTitle: "Workshop Schedule & Venue",
+                nDatesL: "<i class='fas fa-calendar-days'></i> Event Dates",
+                nDatesT: "July 24, 25, 28 & 31 and August 1, 2026",
+                nTimeL: "<i class='fas fa-clock'></i> Daily Time",
+                nTimeT: "03:00 PM - 05:00 PM <span class='small-note'>(2-hour sessions)</span>",
+                nVenueL: "<i class='fas fa-hotel'></i> Workshop Venue",
+                nVenueT: "MASLab, 12th Floor, Green City Center (Opposite to Abahani Ground), 758 Sat Masjid Road, Dhanmondi, Dhaka-1205.",
+                rulTitle: "How to Register",
+                r1: "The full course fee must be paid in advance via bKash or in person at the MASLab office. (Please contact us before coming to the MASLab office).",
+                r2L: "bKash number for registration fee payment:",
+                bkType: "bKash Payment Account",
+                cpTxt: "Copy",
+                r3: "You must send 2040 Taka (including bKash charges) using the bKash <strong>Payment</strong> option.",
+                r4: "The transaction ID (Trx ID: *******) from the bKash confirmation message must be saved.",
+                r5: "Then, while filling out the online form, write the transaction code in the <strong>bKash Transaction ID:......</strong> field and submit the form.",
+                r6: "Registration will be confirmed via SMS within 24 hours. If you do not receive a confirmation within 24 hours, please contact us.",
+                prkTitle: "What's Included in the Workshop",
+                p1: "A certificate will be provided to participants upon successful completion of the course.",
+                p2: "All required materials and accessories will be supplied by MASLab.",
+                p3: "Light refreshments will be served during a 10-minute break within the 2-hour session.",
+                quote: "Let's spend the holidays in joyful learning—exploring strategic pathways to solve puzzles.",
+                fContact: "Contact",
+                fAddr: "12th Floor, Green City Center (Opposite to Abahani Ground), 758 Sat Masjid Road, Dhanmondi, Dhaka-1205.",
+                toast: "Number copied successfully!"
+            }
+        };
+
+        function switchLanguage(lang) {
+            currentLang = lang;
+            
+            document.getElementById('btnBn').classList.toggle('active', lang === 'bn');
+            document.getElementById('btnEn').classList.toggle('active', lang === 'en');
+            
+            const data = langData[lang];
+            
+            document.getElementById('closeBtnTitle').title = data.closeTitle;
+            document.getElementById('txtIntroTitle').innerText = data.introTitle;
+            document.getElementById('txtIntroSub').innerText = data.introSub;
+            document.getElementById('txtIntroDesc').innerText = data.introDesc;
+            
+            document.getElementById('txtAudienceTitle').innerText = data.audTitle;
+            document.getElementById('txtAudienceDesc').innerHTML = data.audDesc;
+            
+            document.getElementById('txtTopicsTitle').innerText = data.topTitle;
+            document.getElementById('txtTopicsDesc').innerHTML = data.topDesc;
+            
+            document.getElementById('txtLessonsTitle').innerText = data.lesTitle;
+            document.getElementById('topic1Title').innerText = data.t1T;
+            document.getElementById('topic1Desc').innerText = data.t1D;
+            document.getElementById('topic2Title').innerText = data.t2T;
+            document.getElementById('topic2Desc').innerText = data.t2D;
+            document.getElementById('topic3Title').innerText = data.t3T;
+            document.getElementById('topic3Desc').innerText = data.t3D;
+            document.getElementById('topic4Title').innerText = data.t4T;
+            document.getElementById('topic4Desc').innerText = data.t4D;
+            document.getElementById('topic5Title').innerText = data.t5T;
+            document.getElementById('topic5Desc').innerText = data.t5D;
+            
+            document.getElementById('txtScheduleTitle').innerText = data.schTitle;
+            document.getElementById('nodeEligibleLbl').innerHTML = data.nEligL;
+            document.getElementById('nodeEligibleTxt').innerText = data.nEligT;
+            document.getElementById('nodeDeadlineLbl').innerHTML = data.nDeadL;
+            document.getElementById('endDateTxt').innerText = data.nDeadT;
+            document.getElementById('nodeFeeLbl').innerHTML = data.nFeeL;
+            document.getElementById('nodeFeeTxt').innerHTML = data.nFeeT;
+            document.getElementById('nodeSeatLbl').innerHTML = data.nSeatL;
+            document.getElementById('nodeSeatTxt').innerHTML = data.nSeatT;
+            document.getElementById('nodeSeatWarn').innerText = data.nSeatW;
+            
+            // আইডি ফিক্সড: এখানে 'btnReg' থেকে পরিবর্তন করে 'btnRegLink' করা হলো
+            document.getElementById('btnRegLink').innerHTML = data.btnReg;
+            
+            document.getElementById('txtTimelineTitle').innerText = data.timeTitle;
+            document.getElementById('nodeDatesLbl').innerHTML = data.nDatesL;
+            document.getElementById('wsDatesTxt').innerText = data.nDatesT;
+            document.getElementById('nodeTimeLbl').innerHTML = data.nTimeL;
+            document.getElementById('nodeTimeTxt').innerHTML = data.nTimeT;
+            document.getElementById('nodeVenueLbl').innerHTML = data.nVenueL;
+            document.getElementById('nodeVenueTxt').innerText = data.nVenueT;
+            
+            document.getElementById('txtRulesTitle').innerText = data.rulTitle;
+            document.getElementById('rule1').innerText = data.r1;
+            document.getElementById('rule2Lbl').innerText = data.r2L;
+            document.getElementById('bkashAccType').innerText = data.bkType;
+            document.getElementById('copyTxt').innerText = data.cpTxt;
+            document.getElementById('rule3').innerHTML = data.r3;
+            document.getElementById('rule4').innerText = data.r4;
+            document.getElementById('rule5').innerHTML = data.r5;
+            document.getElementById('rule6').innerText = data.r6;
+            
+            document.getElementById('txtPerksTitle').innerText = data.prkTitle;
+            document.getElementById('perk1').innerText = data.p1;
+            document.getElementById('perk2').innerText = data.p2;
+            document.getElementById('perk3').innerText = data.p3;
+            
+            document.getElementById('txtQuote').innerText = data.quote;
+            document.getElementById('txtFooterContact').innerText = data.fContact;
+            document.getElementById('txtFooterAddress').innerText = data.fAddr;
+            document.getElementById('toastBox').innerText = data.toast;
+            
+            checkStatusTimeline();
+        }
+
+        function copyNumber() {
+            navigator.clipboard.writeText("01730716522").then(() => {
+                const toast = document.getElementById('toastBox');
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 2500);
+            });
+        }
+
+        function checkStatusTimeline() {
+            const now = new Date();
+            const regEnd = new Date('2026-07-23T23:59:00');
+            const wsStart = new Date('2026-07-24T15:00:00');
+            const wsEnd = new Date('2026-08-01T17:00:00');
+
+            if (now > regEnd) {
+                document.getElementById('endDateNode').classList.add('strike-out');
+            } else {
+                document.getElementById('endDateNode').classList.remove('strike-out');
+            }
+
+            const regText = document.getElementById('regStatusText');
+            if (now <= regEnd) {
+                document.getElementById('regStatusBadge').className = "status-badge success";
+                document.getElementById('regStatusDot').className = "status-dot green";
+                regText.innerText = currentLang === 'bn' ? "নিবন্ধন চলমান" : "Registration Open";
+            } else {
+                document.getElementById('regStatusBadge').className = "status-badge running";
+                document.getElementById('regStatusDot').className = "status-dot red";
+                regText.innerText = currentLang === 'bn' ? "নিবন্ধন শেষ" : "Closed";
+            }
+
+            const wsText = document.getElementById('workshopStatusText');
+            if (now < wsStart) {
+                const days = Math.ceil((wsStart - now) / (1000 * 3600 * 24));
+                document.getElementById('workshopStatusBadge').className = "status-badge running";
+                document.getElementById('workshopStatusDot').className = "status-dot red";
+                wsText.innerText = currentLang === 'bn' ? `আয়োজন শুরু হতে বাকি ${days} দিন` : `${days} Days Left`;
+            } else if (now >= wsStart && now <= wsEnd) {
+                document.getElementById('workshopStatusBadge').className = "status-badge success";
+                document.getElementById('workshopStatusDot').className = "status-dot green";
+                wsText.innerText = currentLang === 'bn' ? "আয়োজন চলমান" : "Ongoing";
+            } else {
+                document.getElementById('workshopStatusBadge').className = "status-badge running";
+                document.getElementById('workshopStatusDot').className = "status-dot red";
+                wsText.innerText = currentLang === 'bn' ? "আয়োজন শেষ হয়েছে" : "Event Ended";
+            }
+        }
+        
+        window.onload = checkStatusTimeline;
+    </script>
+</body>
+</html>
