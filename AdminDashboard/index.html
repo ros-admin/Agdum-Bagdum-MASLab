@@ -370,7 +370,7 @@
                         <strong id="mRegTime" class="text-slate-800 font-mono text-xs">-</strong>
                     </div>
                     <div class="p-2 bg-slate-50 rounded-xl text-center border border-slate-100 flex flex-col justify-center items-center">
-                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5"><i class="fas fa-toggle-on mr-1"></i>Profile Status</span>
+                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5"><i class="fas fa-toggle-on mr-1"></i>Status</span>
                         <span id="mStatus" class="rounded-lg px-2 py-0.5 font-bold text-[10px] uppercase shadow-2xs">-</span>
                     </div>
                 </div>
@@ -398,7 +398,7 @@
                                 <strong id="mGender" class="text-slate-700 font-bold"></strong>
                             </div>
                             <div class="info-sub-box">
-                                <span class="text-slate-400 text-[9px] font-bold uppercase tracking-wider block mb-0.5"><i class="fas fa-child mr-1"></i>Age Slot</span> 
+                                <span class="text-slate-400 text-[9px] font-bold uppercase tracking-wider block mb-0.5"><i class="fas fa-child mr-1"></i>Age</span> 
                                 <strong id="mAge" class="text-slate-700 font-bold"></strong>
                             </div>
                         </div>
@@ -413,7 +413,7 @@
                             <i class="fas fa-wallet text-pink-500"></i> Payment Details
                         </h4>
                         <div class="info-sub-box">
-                            <span class="text-slate-400 text-[9px] font-bold uppercase tracking-wider block mb-0.5"><i class="fas fa-shield-check mr-1"></i>bKash Verification Status</span> 
+                            <span class="text-slate-400 text-[9px] font-bold uppercase tracking-wider block mb-0.5"><i class="fas fa-shield-check mr-1"></i>Paid Though bKash</span> 
                             <strong id="mPaid" class="text-slate-900 font-bold flex items-center gap-1"></strong>
                         </div>
                         <div class="info-sub-box">
@@ -434,12 +434,12 @@
                 </div>
 
                 <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs text-xs">
-                    <span class="text-slate-400 text-[9px] font-bold uppercase tracking-wider block mb-1 flex items-center gap-1"><i class="fas fa-comment-medical text-indigo-500"></i>Admin Action Note / Status Remarks</span>
+                    <span class="text-slate-400 text-[9px] font-bold uppercase tracking-wider block mb-1 flex items-center gap-1"><i class="fas fa-comment-medical text-indigo-500"></i>Admin Note / Status Remarks</span>
                     <p id="mAdminReason" class="text-slate-800 bg-slate-50/80 p-2.5 rounded-lg border border-slate-100 font-semibold"></p>
                 </div>
                 
                 <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs text-xs">
-                    <span class="text-slate-400 text-[9px] font-bold uppercase tracking-wider block mb-1 flex items-center gap-1"><i class="far fa-comments text-amber-500"></i>User Submitted Registration Comment</span>
+                    <span class="text-slate-400 text-[9px] font-bold uppercase tracking-wider block mb-1 flex items-center gap-1"><i class="far fa-comments text-amber-500"></i>Student Comment</span>
                     <p id="mComment" class="text-slate-700 bg-slate-50/80 p-2.5 rounded-lg border border-slate-100 min-h-[40px] font-medium leading-relaxed"></p>
                 </div>
             </div>
@@ -931,10 +931,10 @@
             paidLabel.innerText = isPaid;
             if (isPaid === "Yes") {
                 paidLabel.className = "text-emerald-600 flex items-center gap-1 font-bold";
-                paidLabel.innerHTML = `<i class="fas fa-check-circle text-xs"></i> Verified Paid`;
+                paidLabel.innerHTML = `<i class="fas fa-check-circle text-xs"></i> Paid`;
             } else {
                 paidLabel.className = "text-rose-600 flex items-center gap-1 font-bold";
-                paidLabel.innerHTML = `<i class="fas fa-times-circle text-xs"></i> Unpaid / No`;
+                paidLabel.innerHTML = `<i class="fas fa-times-circle text-xs"></i> No`;
             }
 
             document.getElementById('mBkash').innerText = st.bkash_number || "-";
