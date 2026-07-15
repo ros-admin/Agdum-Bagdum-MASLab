@@ -1040,26 +1040,28 @@
             const pageHeight = doc.internal.pageSize.height;
 
             const headers = [[
-                "Serial", "Name", "Mobile", "Email", "Remarks Box"
+                "Serial", "Name", "Mobile", "Email", "Gender", "Status", "Remarks Box"
             ]];
 
             const rows = studentsGlobalData.map((st, idx) => [
-                 idx + 1, st.name || "-", st.mobile || "-", st.email || "-", ""
+                 idx + 1, st.name || "-", st.mobile || "-", st.email || "-", translateGender(st.gender), st.status || "Pending", ""
             ]);
 
             doc.autoTable({
                 head: headers,
                 body: rows,
                 theme: 'grid',
-                styles: { fontSize: 9, cellPadding: 3, minCellHeight: 10 },
+                styles: { fontSize: 9, cellPadding: 3, minCellHeight: 10, halign: 'center' },
                 headStyles: { fillColor: [79, 70, 229], textColor: [255, 255, 255] },
                 columnStyles: {
                 
                     0: { cellWidth: 15, halign: 'center' },
-                    1: { cellWidth: 50, halign: 'center' },
+                    1: { cellWidth: 80, halign: 'center' },
                     2: { cellWidth: 40, halign: 'center' },
                     3: { cellWidth: 60, halign: 'center' },
-                    4: { cellWidth: 80, halign: 'center' }
+                    4: { cellWidth: 25, halign: 'center' },
+                    5: { cellWidth: 30, halign: 'center' },
+                    6: { cellWidth: 50, halign: 'center' }
                 },
                 margin: { top: 35, bottom: 20, left: 10, right: 10 },
                 didDrawPage: function (data) {
