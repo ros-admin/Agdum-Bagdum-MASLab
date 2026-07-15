@@ -413,7 +413,7 @@
                             <i class="fas fa-wallet text-pink-500"></i> Payment Details
                         </h4>
                         <div class="info-sub-box">
-                            <span class="text-slate-400 text-[9px] font-bold uppercase tracking-wider block mb-0.5"><i class="fas fa-shield-check mr-1"></i>Paid Though bKash</span> 
+                            <span class="text-slate-400 text-[9px] font-bold uppercase tracking-wider block mb-0.5"><i class="fas fa-money-check-alt"></i>Paid Though bKash</span> 
                             <strong id="mPaid" class="text-slate-900 font-bold flex items-center gap-1"></strong>
                         </div>
                         <div class="info-sub-box">
@@ -1040,11 +1040,11 @@
             const pageHeight = doc.internal.pageSize.height;
 
             const headers = [[
-                "❏", "Serial", "Name", "Mobile", "Email", "Remarks Box"
+                "🔲", "Serial", "Name", "Mobile", "Email", "Remarks Box"
             ]];
 
             const rows = studentsGlobalData.map((st, idx) => [
-                "⬚", idx + 1, st.name || "-", st.mobile || "-", st.email || "-", ""
+                "🔲", idx + 1, st.name || "-", st.mobile || "-", st.email || "-", ""
             ]);
 
             doc.autoTable({
