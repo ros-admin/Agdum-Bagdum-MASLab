@@ -283,7 +283,7 @@
                                 <th class="p-3 font-bold text-slate-800">Age</th>
                                 <th class="p-3 font-bold text-slate-800">Status</th>
                                 <th class="p-3 font-bold text-slate-800 text-center">Change Status</th>
-                                <th class="p-3 font-bold text-slate-800 text-center w-24">Action</th>
+                                <th class="p-3 font-bold text-slate-800 text-center w-24">Details</th>
                             </tr>
                         </thead>
                         <tbody id="tableBody" class="divide-y divide-slate-50"></tbody>
@@ -417,7 +417,7 @@
                             <strong id="mPaid" class="text-slate-900 font-bold flex items-center gap-1"></strong>
                         </div>
                         <div class="info-sub-box">
-                            <span class="text-slate-400 text-[9px] font-bold uppercase tracking-wider block mb-0.5"><i class="fas fa-mobile-android mr-1"></i>Sender bKash Mobile</span> 
+                            <span class="text-slate-400 text-[9px] font-bold uppercase tracking-wider block mb-0.5"><i class="fas fa-mobile-android mr-1"></i>Sender BKash Number</span> 
                             <strong id="mBkash" class="text-slate-700 font-semibold font-mono text-xs"></strong>
                         </div>
                         <div class="info-sub-box flex-1 flex flex-col justify-between">
@@ -836,7 +836,7 @@
                     </td>
                     <td class="p-3 text-center">
                         <button onclick="openDetailsModal(${globalIdx})" class="bg-gradient-to-r from-indigo-50 to-indigo-100 hover:from-indigo-600 hover:to-indigo-700 text-indigo-600 hover:text-white font-bold px-3 py-1.5 rounded-xl text-xs transition-all duration-200 shadow-2xs hover:shadow-md cursor-pointer flex items-center justify-center gap-1 mx-auto border border-indigo-200/50 hover:border-transparent">
-                            <i class="fas fa-eye text-[10px]"></i> View Profile
+                            <i class="fas fa-eye text-[10px]"></i>
                         </button>
                     </td>`;
                 tbody.appendChild(tr);
@@ -1040,11 +1040,11 @@
             const pageHeight = doc.internal.pageSize.height;
 
             const headers = [[
-                "☐", "Serial", "Name", "Mobile", "Email", "Remarks Box"
+                "❏", "Serial", "Name", "Mobile", "Email", "Remarks Box"
             ]];
 
             const rows = studentsGlobalData.map((st, idx) => [
-                "☐", idx + 1, st.name || "-", st.mobile || "-", st.email || "-", ""
+                "⬚", idx + 1, st.name || "-", st.mobile || "-", st.email || "-", ""
             ]);
 
             doc.autoTable({
