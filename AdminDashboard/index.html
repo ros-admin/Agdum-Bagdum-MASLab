@@ -832,7 +832,6 @@
                             <option value="Approved" ${st.status === 'Approved' ? 'disabled' : ''}>Approved</option>
                             <option value="Pending" ${st.status === 'Pending' || !st.status ? 'disabled' : ''}>Pending</option>
                             <option value="Suspended" ${st.status === 'Suspended' ? 'disabled' : ''}>Suspended</option>
-                            <option value="Inactive" ${st.status === 'Inactive' ? 'disabled' : ''}>Inactive</option>
                         </select>
                     </td>
                     <td class="p-3 text-center">
@@ -1041,7 +1040,7 @@
             const pageHeight = doc.internal.pageSize.height;
 
             const headers = [[
-                "Checkbox", "Serial", "Name", "Mobile", "Email", "Remarks Box"
+                "☐", "Serial", "Name", "Mobile", "Email", "Remarks Box"
             ]];
 
             const rows = studentsGlobalData.map((st, idx) => [
