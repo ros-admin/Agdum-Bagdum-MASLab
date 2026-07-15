@@ -1040,11 +1040,11 @@
             const pageHeight = doc.internal.pageSize.height;
 
             const headers = [[
-                "Serial", "Name", "Mobile", "Email", "Gender", "Status", "Remarks"
+                "Serial", "Name", "Mobile", "Email", "Gender", "Age", "Status", "Remarks"
             ]];
 
             const rows = studentsGlobalData.map((st, idx) => [
-                 idx + 1, st.name || "-", st.mobile || "-", st.email || "-", translateGender(st.gender), st.status || "Pending", ""
+                 idx + 1, st.name || "-", st.mobile || "-", st.email || "-", translateGender(st.gender), translateAge(st.age), st.status || "Pending", ""
             ]);
 
             doc.autoTable({
@@ -1061,7 +1061,8 @@
                     3: { cellWidth: 60, halign: 'center' },
                     4: { cellWidth: 25, halign: 'center' },
                     5: { cellWidth: 30, halign: 'center' },
-                    6: { cellWidth: 30, halign: 'center' }
+                    6: { cellWidth: 20, halign: 'center' },
+                    7: { cellWidth: 30, halign: 'center' }
                 },
                 margin: { top: 35, bottom: 20, left: 10, right: 10 },
                 didDrawPage: function (data) {
