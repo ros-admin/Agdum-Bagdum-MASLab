@@ -355,8 +355,8 @@
                 <div class="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-2 backdrop-blur-xs">
                     <i class="fas fa-id-card text-lg text-indigo-200"></i>
                 </div>
-                <h1 class="text-xl font-bold tracking-wide">Agdum Bagdum - Season 2</h1>
-                <p class="text-[10px] font-bold opacity-75 uppercase tracking-widest mt-0.5">Student Detail Profile Sheet</p>
+                <h1 class="text-xl font-bold tracking-wide">Agdum Bagdum</h1>
+                <p class="text-[10px] font-bold opacity-75 uppercase tracking-widest mt-0.5">Student Profile</p>
             </div>
             
             <div class="p-5 space-y-4 bg-slate-50/40">
@@ -1005,18 +1005,19 @@
                 margin: { top: 35, bottom: 20, left: 10, right: 10 },
                 didDrawPage: function (data) {
                     // Header Area
-                    doc.setFontSize(16);
-                    doc.setFont("Outfit", "bold");
-                    doc.text("Agdum Bagdum", 10, 14);
-                    
-                    doc.setFontSize(10);
-                    doc.setFont("Outfit", "normal");
-                    doc.text("Season 02", 10, 20);
-                    
-                    doc.setFontSize(12);
-                    doc.setFont("Outfit", "bold");
-                    doc.text("Registration Data (All Student)", pageWidth - 10, 16, { align: 'right' });
-                    
+doc.setFont("Outfit", "bold");
+
+// Main Title
+doc.setFontSize(16);
+doc.text("Agdum Bagdum", pageWidth / 2, 15, {
+    align: "center"
+});
+
+// Subtitle
+doc.setFontSize(12);
+doc.text("Registration Data (All Student)", pageWidth / 2, 22, {
+    align: "center"
+});
                     // Footer Layout Setup
                     doc.setFontSize(8);
                     doc.setFont("Outfit", "normal");
@@ -1026,7 +1027,7 @@
                 }
             });
 
-            doc.save("Registration_Summary_AgdumBagdum_Season2.pdf");
+            doc.save("Registration_Summary_AgdumBagdum.pdf");
             triggerPopupNotice("Completed", "PDF downloaded successfully!", "success");
         }
 
@@ -1067,18 +1068,19 @@
                 margin: { top: 35, bottom: 20, left: 10, right: 10 },
                 didDrawPage: function (data) {
                     // Header Area
-                    doc.setFontSize(16);
-                    doc.setFont("Outfit", "bold");
-                    doc.text("Agdum Bagdum", 10, 14);
-                    
-                    doc.setFontSize(10);
-                    doc.setFont("Outfit", "normal");
-                    doc.text("Season 02", 10, 20);
-                    
-                    doc.setFontSize(12);
-                    doc.setFont("Outfit", "bold");
-                    doc.text("Remarks Sheet", pageWidth - 10, 16, { align: 'right' });
-                    
+doc.setFont("Outfit", "bold");
+
+// Main Title
+doc.setFontSize(16);
+doc.text("Agdum Bagdum", pageWidth / 2, 15, {
+    align: "center"
+});
+
+// Subtitle
+doc.setFontSize(12);
+doc.text("Remarks Sheet", pageWidth / 2, 22, {
+    align: "center"
+});
                     // Footer Layout Setup
                     doc.setFontSize(8);
                     doc.setFont("Outfit", "normal");
@@ -1088,7 +1090,7 @@
                 }
             });
 
-            doc.save("Remarks_Sheet_AgdumBagdum_Season2.pdf");
+            doc.save("Remarks_Sheet_AgdumBagdum.pdf");
             triggerPopupNotice("Completed", "Remarks Sheet downloaded successfully!", "success");
         }
 
@@ -1130,10 +1132,6 @@
                     doc.setTextColor(15, 23, 42);
                     doc.text("Agdum Bagdum", pageWidth / 2, 12, { align: 'center' });
                     
-                    doc.setFontSize(11);
-                    doc.setFont("Outfit", "medium");
-                    doc.text("Season 02", pageWidth / 2, 18, { align: 'center' });
-                    
                     doc.setFontSize(13);
                     doc.setFont("Outfit", "bold");
                     doc.text("Attendence Sheet", pageWidth / 2, 25, { align: 'center' });
@@ -1153,7 +1151,7 @@
                 }
             });
 
-            doc.save(`Attendance_Sheet_Season2_${fileLabel}.pdf`);
+            doc.save(`Attendance_Sheet_Agdum_Bagdum_${fileLabel}.pdf`);
             showToast("Attendance sheet downloaded!");
         }
     </script>
